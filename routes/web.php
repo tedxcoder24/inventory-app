@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AttributeController;
+use App\Http\Controllers\ConfigController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ItemController;
@@ -41,6 +42,8 @@ Route::middleware('auth')->group(function () {
     Route::post('items/change-status', [ItemController::class, 'batchChangeStatus'])->name('item.batch-change-status');
 
     Route::resource('/attributes', AttributeController::class);
+
+    Route::resource('/config', ConfigController::class);
 });
 
 require __DIR__.'/auth.php';
