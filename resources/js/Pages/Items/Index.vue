@@ -125,13 +125,13 @@ const updateItems = () => {
                                             </label>
                                         </th>
                                         <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
+                                            Serial Number
+                                        </th>
+                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
                                             Operator
                                         </th>
                                         <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
                                             Date Time
-                                        </th>
-                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
-                                            Serial Number
                                         </th>
                                         <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
                                             Type
@@ -187,6 +187,15 @@ const updateItems = () => {
                                             <div class="flex items-center justify-center">
                                                 <div>
                                                     <div class="text-sm font-medium text-gray-900">
+                                                        {{ item.serial_number }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center justify-center">
+                                                <div>
+                                                    <div class="text-sm font-medium text-gray-900">
                                                         {{ item.operator }}
                                                     </div>
                                                 </div>
@@ -197,15 +206,6 @@ const updateItems = () => {
                                                 <div>
                                                     <div class="text-sm font-medium text-gray-900">
                                                         {{ item.date_time }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="flex items-center justify-center">
-                                                <div>
-                                                    <div class="text-sm font-medium text-gray-900">
-                                                        {{ item.serial_number }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -360,7 +360,7 @@ const updateItems = () => {
                                         </td>
                                     </tr>
                                     <tr>
-                                        There are {{ items.data.length }} items.
+                                        There are {{ items.data.length }} item(s).
                                     </tr>
                                 </tbody>
                             </table>
