@@ -1,6 +1,6 @@
 <script setup>
 import { computed, ref } from 'vue';
-import { Head, Link, router, useForm } from '@inertiajs/vue3';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Checkbox from '@/Components/Checkbox.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
@@ -22,6 +22,9 @@ const props = defineProps({
         type: Object,
     }
 });
+
+const page = usePage();
+const role = computed(() => page.props.auth.user.role);
 
 const showModal = ref(false);
 const selectedItems = ref([]);
@@ -122,13 +125,13 @@ const updateItems = () => {
                                             </label>
                                         </th>
                                         <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
+                                            Serial Number
+                                        </th>
+                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
                                             Operator
                                         </th>
                                         <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
                                             Date Time
-                                        </th>
-                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
-                                            Serial Number
                                         </th>
                                         <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
                                             Type
@@ -163,7 +166,7 @@ const updateItems = () => {
                                         <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
                                             Appearance
                                         </th>
-                                        <th scope="col" class="relative px-6 py-3">
+                                        <th v-if="role === 'admin'" scope="col" class="relative px-6 py-3">
                                             <span class="sr-only">Edit</span>
                                         </th>
                                     </tr>
@@ -184,6 +187,15 @@ const updateItems = () => {
                                             <div class="flex items-center justify-center">
                                                 <div>
                                                     <div class="text-sm font-medium text-gray-900">
+                                                        {{ item.serial_number }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center justify-center">
+                                                <div>
+                                                    <div class="text-sm font-medium text-gray-900">
                                                         {{ item.operator }}
                                                     </div>
                                                 </div>
@@ -194,15 +206,6 @@ const updateItems = () => {
                                                 <div>
                                                     <div class="text-sm font-medium text-gray-900">
                                                         {{ item.date_time }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="flex items-center justify-center">
-                                                <div>
-                                                    <div class="text-sm font-medium text-gray-900">
-                                                        {{ item.serial_number }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -304,7 +307,7 @@ const updateItems = () => {
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                                        <td v-if="role === 'admin'" class="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
                                             <div class="flex items-center justify-center">
                                                 <Link
                                                     :href="`/items/${item.id}`"
@@ -357,7 +360,7 @@ const updateItems = () => {
                                         </td>
                                     </tr>
                                     <tr>
-                                        There are {{ items.data.length }} items.
+                                        There are {{ items.data.length }} item(s).
                                     </tr>
                                 </tbody>
                             </table>

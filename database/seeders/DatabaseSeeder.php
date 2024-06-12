@@ -30,8 +30,13 @@ class DatabaseSeeder extends Seeder
             "name"=> "admin",
             "email"=> "admin@gmail.com",
             "password"=> bcrypt("123123123"),
+            ]);
+        \App\Models\User::create([
+            "name"=> "user",
+            "email"=> "user@gmail.com",
+            "password"=> bcrypt("123123123"),
         ]);
         \App\Models\User::where("email", "admin@gmail.com")->first()->assignRole("admin");
-        \App\Models\User::factory(10)->create();
+        \App\Models\User::where("email", "user@gmail.com")->first()->assignRole("user");
     }
 }
