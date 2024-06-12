@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('operators', function (Blueprint $table) {
             $table->id();
             $table->string('operator', 30);
+            $table->boolean('enabled')->default(true);
             $table->timestamps();
         });
     }

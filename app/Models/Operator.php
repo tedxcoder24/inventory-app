@@ -9,5 +9,5 @@ class Operator extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['operator'];
+    protected $fillable = ['operator', 'enabled'];
 }

@@ -9,5 +9,5 @@ class Strain extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['strain'];
+    protected $fillable = ['strain', 'enabled'];
 }

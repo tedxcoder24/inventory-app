@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('appearances', function (Blueprint $table) {
             $table->id();
             $table->string('appearance', 20);
+            $table->boolean('enabled')->default(true);
             $table->timestamps();
         });
     }

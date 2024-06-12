@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('product', 20);
+            $table->boolean('enabled')->default(true);
             $table->timestamps();
         });
     }

@@ -17,6 +17,7 @@ class OperatorResource extends JsonResource
         return [
             'value' => $this->id,
             'text' => $this->operator,
+            'enabled' => $this->enabled,
         ];
     }
 }

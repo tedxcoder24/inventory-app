@@ -11,6 +11,7 @@ class ItemType extends Model
 
     protected $fillable = [
         'item_type', 
+        'enabled'
     ];
 
     public function weightUnit()

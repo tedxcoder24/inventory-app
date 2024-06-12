@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('clarities', function (Blueprint $table) {
             $table->id();
             $table->string('clarity', 20);
+            $table->boolean('enabled')->default(true);
             $table->timestamps();
         });
     }

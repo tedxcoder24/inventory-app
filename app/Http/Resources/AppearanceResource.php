@@ -17,6 +17,7 @@ class AppearanceResource extends JsonResource
         return [
             'value' => $this->id,
             'text' => $this->appearance,
+            'enabled' => $this->enabled,
         ];
     }
 }
