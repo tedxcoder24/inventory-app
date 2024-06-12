@@ -41,9 +41,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('/items', ItemController::class);
     Route::post('items/change-status', [ItemController::class, 'batchChangeStatus'])->name('item.batch-change-status');
 
-    Route::resource('/attributes', AttributeController::class);
-
-    Route::resource('/config', ConfigController::class);
+    Route::resource('/attributes', AttributeController::class)->middleware('role:admin');
+    Route::resource('/config', ConfigController::class)->middleware('role:admin');
 });
 
 require __DIR__.'/auth.php';
