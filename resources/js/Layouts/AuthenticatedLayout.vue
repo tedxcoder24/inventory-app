@@ -1,11 +1,14 @@
 <script setup>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
+
+const page = usePage();
+const role = computed(() => page.props.auth.user.role);
 
 const showingNavigationDropdown = ref(false);
 </script>
@@ -37,6 +40,18 @@ const showingNavigationDropdown = ref(false);
                             <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 <NavLink :href="route('items.index')" :active="route().current('items.index')">
                                     Inventory
+                                </NavLink>
+                            </div>
+
+                            <div v-if="role === 'admin'" class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                <NavLink :href="route('attributes.index')" :active="route().current('attributes.index')">
+                                    Attribute
+                                </NavLink>
+                            </div>
+
+                            <div v-if="role === 'admin'" class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                <NavLink :href="route('config.index')" :active="route().current('config.index')">
+                                    Config
                                 </NavLink>
                             </div>
                         </div>
@@ -124,6 +139,14 @@ const showingNavigationDropdown = ref(false);
 
                         <ResponsiveNavLink :href="route('items.index')" :active="route().current('items.index')">
                             Inventory
+                        </ResponsiveNavLink>
+
+                        <ResponsiveNavLink v-if="role === 'admin'":href="route('attributes.index')" :active="route().current('attributes.index')">
+                            Attribute
+                        </ResponsiveNavLink>
+
+                        <ResponsiveNavLink v-if="role === 'admin'":href="route('config.index')" :active="route().current('config.index')">
+                            Config
                         </ResponsiveNavLink>
                     </div>
 
