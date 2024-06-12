@@ -11,6 +11,9 @@ const props = defineProps({
     value: {
         default: null,
     },
+    indeterminate: {
+        default: null,
+    }
 });
 
 const proxyChecked = computed({
@@ -28,6 +31,7 @@ const proxyChecked = computed({
     <input
         type="checkbox"
         :value="value"
+        :indeterminate="indeterminate"
         v-model="proxyChecked"
         class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
     />
