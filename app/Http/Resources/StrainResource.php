@@ -17,6 +17,7 @@ class StrainResource extends JsonResource
         return [
             'value' => $this->id,
             'text' => $this->strain,
+            'enabled' => $this->enabled,
         ];
     }
 }

@@ -9,5 +9,5 @@ class Clarity extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['clarity'];
+    protected $fillable = ['clarity', 'enabled'];
 }

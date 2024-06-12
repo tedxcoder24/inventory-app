@@ -17,6 +17,7 @@ class ItemTypeResource extends JsonResource
         return [
             'value' => $this->id,
             'text' => $this->item_type,
+            'enabled' => $this->enabled,
         ];
     }
 }

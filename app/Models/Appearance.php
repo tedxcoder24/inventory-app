@@ -9,5 +9,5 @@ class Appearance extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['appearance'];
+    protected $fillable = ['appearance', 'enabled'];
 }

@@ -17,6 +17,7 @@ class ClarityResource extends JsonResource
         return [
             'value' => $this->id,
             'text' => $this->clarity,
+            'enabled' => $this->enabled,
         ];
     }
 }

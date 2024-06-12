@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('item_types', function (Blueprint $table) {
             $table->id();
             $table->string('item_type');
+            $table->boolean('enabled')->default(true);
             $table->timestamps();
         });
     }

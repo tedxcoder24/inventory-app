@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('strains', function (Blueprint $table) {
             $table->id();
             $table->string('strain', 30);
+            $table->boolean('enabled')->default(true);
             $table->timestamps();
         });
     }
