@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
+            ConfigTableSeeder::class,
             WeightUnitsTableSeeder::class,
             OperatorsTableSeeder::class,
             ItemTypesTableSeeder::class,
@@ -22,7 +23,15 @@ class DatabaseSeeder extends Seeder
             ColorsTableSeeder::class,
             ClaritiesTableSeeder::class,
             AppearancesTableSeeder::class,
-            ConfigTableSeeder::class,
+            RolesTableSeeder::class,
         ]);
+
+        \App\Models\User::create([
+            "name"=> "admin",
+            "email"=> "admin@gmail.com",
+            "password"=> bcrypt("123123123"),
+        ]);
+        \App\Models\User::where("email", "admin@gmail.com")->first()->assignRole("admin");
+        \App\Models\User::factory(10)->create();
     }
 }
