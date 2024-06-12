@@ -81,7 +81,48 @@ class AttributeController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        switch ($request->attribute) {
+            case 'Operator':
+                Operator::findOrFail($id)->update([
+                    'enabled' => $request->enabled,
+                ]);
+                break;
+            case 'Item Type':
+                ItemType::findOrFail($id)->update([
+                    'enabled' => $request->enabled,
+                ]);
+                break;
+            case 'Strain':
+                Strain::findOrFail($id)->update([
+                    'enabled' => $request->enabled,
+                ]);
+                break;
+            case 'Product':
+                Product::findOrFail($id)->update([
+                    'enabled' => $request->enabled,
+                ]);
+                break;
+            case 'Color':
+                Color::findOrFail($id)->update([
+                    'enabled' => $request->enabled,
+                ]);
+                break;
+            case 'Clarity':
+                Clarity::findOrFail($id)->update([
+                    'enabled' => $request->enabled,
+                ]);
+                break;
+            case 'Appearance':
+                Appearance::findOrFail($id)->update([
+                    'enabled' => $request->enabled,
+                ]);
+                break;
+            case 'Status':
+                Status::findOrFail($id)->update([
+                    'enabled' => $request->enabled,
+                ]);
+                break;
+        }
     }
 
     /**

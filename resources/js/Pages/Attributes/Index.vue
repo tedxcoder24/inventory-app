@@ -84,19 +84,19 @@ defineProps({
                         <div>
                             <label>Clarity</label>
 
-                            <AttributeTable header="clarity" :attributes="clarities.data" />
+                            <AttributeTable header="Clarity" :attributes="clarities.data" />
                         </div>
 
                         <div>
                             <label>Appearance</label>
 
-                            <AttributeTable header="appearance" :attributes="appearances.data" />
+                            <AttributeTable header="Appearance" :attributes="appearances.data" />
                         </div>
 
                         <div>
                             <label>Status</label>
 
-                            <AttributeTable header="status" :attributes="statuses.data" />
+                            <AttributeTable header="Status" :attributes="statuses.data" />
                         </div>
 
                     </div>

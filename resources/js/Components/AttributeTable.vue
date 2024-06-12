@@ -1,7 +1,7 @@
 <script setup>
-import { Link } from '@inertiajs/vue3';
+import { router } from '@inertiajs/vue3';
 
-defineProps({
+const props = defineProps({
     header: {
         type: String,
         required: true,
@@ -11,6 +11,13 @@ defineProps({
         required: true,
     },
 });
+
+const updateAttribute = (attr) => {
+    router.put(route('attributes.update', attr.value), {
+        enabled: attr.enabled ? false : true,
+        attribute: props.header,
+    });
+}
 </script>
 
 <template>
@@ -65,12 +72,13 @@ defineProps({
 
                 <td class="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
                     <div class="flex items-center justify-center">
-                        <Link
-                            :href="`/attributes/${attr.value}`"
+                        <a
+                            href="#"
+                            @click="updateAttribute(attr)"
                             class="px-4 py-2 mr-3 text-sm text-green-600 transition border border-green-300 rounded-full hover:bg-green-600 hover:text-white hover:border-transparent hover:cursor-pointer"
                         >
                             {{ attr.enabled ? 'Disable' : 'Enable' }}
-                        </Link>
+                        </a>
                     </div>
                 </td>
             </tr>

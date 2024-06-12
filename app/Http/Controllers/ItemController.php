@@ -51,15 +51,15 @@ class ItemController extends Controller
     public function create()
     {
         return Inertia::render('Items/Create', [
-            'operators' => OperatorResource::collection(Operator::all()),
-            'itemTypes' => ItemTypeResource::collection(ItemType::all()),
+            'operators' => OperatorResource::collection(Operator::where('enabled', true)->get()),
+            'itemTypes' => ItemTypeResource::collection(ItemType::where('enabled', true)->get()),
             'weightUnits' => WeightUnitResource::collection(WeightUnit::all()),
-            'strains' => StrainResource::collection(Strain::all()),
-            'products' => ProductResource::collection(Product::all()),
-            'colors' => ColorResource::collection(Color::all()),
-            'clarities' => ClarityResource::collection(Clarity::all()),
-            'appearances' => AppearanceResource::collection(Appearance::all()),
-            'statuses' => StatusResource::collection(Status::all()),
+            'strains' => StrainResource::collection(Strain::where('enabled', true)->get()),
+            'products' => ProductResource::collection(Product::where('enabled', true)->get()),
+            'colors' => ColorResource::collection(Color::where('enabled', true)->get()),
+            'clarities' => ClarityResource::collection(Clarity::where('enabled', true)->get()),
+            'appearances' => AppearanceResource::collection(Appearance::where('enabled', true)->get()),
+            'statuses' => StatusResource::collection(Status::where('enabled', true)->get()),
         ]);
     }
 
@@ -138,14 +138,14 @@ class ItemController extends Controller
     {
         return Inertia::render('Items/Edit', [
             'item' => $item,
-            'operators' => OperatorResource::collection(Operator::all()),
-            'itemTypes' => ItemTypeResource::collection(ItemType::all()),
+            'operators' => OperatorResource::collection(Operator::where('enabled', true)->get()),
+            'itemTypes' => ItemTypeResource::collection(ItemType::where('enabled', true)->get()),
             'weightUnits' => WeightUnitResource::collection(WeightUnit::all()),
-            'strains' => StrainResource::collection(Strain::all()),
-            'products' => ProductResource::collection(Product::all()),
-            'colors' => ColorResource::collection(Color::all()),
-            'clarities' => ClarityResource::collection(Clarity::all()),
-            'appearances' => AppearanceResource::collection(Appearance::all()),
+            'strains' => StrainResource::collection(Strain::where('enabled', true)->get()),
+            'products' => ProductResource::collection(Product::where('enabled', true)->get()),
+            'colors' => ColorResource::collection(Color::where('enabled', true)->get()),
+            'clarities' => ClarityResource::collection(Clarity::where('enabled', true)->get()),
+            'appearances' => AppearanceResource::collection(Appearance::where('enabled', true)->get()),
         ]);
     }
 
