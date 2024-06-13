@@ -14,7 +14,7 @@ class ClaritiesTableSeeder extends Seeder
     public function run(): void
     {
         DB::table('clarities')->insert([
-            ['clarity' => 'N/A'],
+            ['clarity' => ''],
             ['clarity' => 'CLEAR'],
             ['clarity' => 'SOMEWHAT CLEAR'],
             ['clarity' => 'DARK'],

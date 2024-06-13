@@ -10,5 +10,5 @@ class WeightUnit extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['weight_unit'];
+    protected $fillable = ['weight_unit', 'abbreviation'];
 }

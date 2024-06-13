@@ -19,10 +19,6 @@ defineProps({
         type: Object,
         required: true,
     },
-    weightUnits: {
-        type: Object,
-        required: true,
-    },
     strains: {
         type: Object,
         required: true,
@@ -46,6 +42,7 @@ defineProps({
 });
 
 const showCreateConfirmModal = ref(false);
+const showContinueModal = ref(false);
 
 const form = useForm({
     operator_id: 0,
@@ -55,7 +52,6 @@ const form = useForm({
     metrc_id: '',
     tare_weight: 0,
     gross_weight: 0,
-    weight_unit_id: 0,
     strain_id: 0,
     product_id: 0,
     color_id: 0,
@@ -63,16 +59,30 @@ const form = useForm({
     appearance_id: 0,
 });
 
-const confirmItemCreate = () => {
+const confirmItemCreation = () => {
     showCreateConfirmModal.value = true;
 }
 
-const submit = () => {
-    if (!confirm("Are you sure want to save item?")) return;
-
+const createItem = () => {
     form.post(route('items.store'), {
-        onFinish: () => form.reset('operator'),
+        onFinish: () => {
+            showCreateConfirmModal.value = false;
+            showContinueModal.value = true;
+        },
     });
+}
+
+const continueCreation = () => {
+    form.date_time = new Date();
+    form.batch_id = '';
+    form.metrc_id = '';
+    form.tare_weight = 0;
+    form.gross_weight = 0;
+    form.color_id = '';
+    form.clarity_id = '';
+    form.appearance_id = '';
+
+    showContinueModal.value = false;
 }
 
 const cancel = () => {
@@ -94,178 +104,179 @@ const cancel = () => {
                     <div class="p-6">
                         <p class="text-gray-900 mb-6">Select attributes for an item.</p>
 
-                        <form @submit.prevent="submit">
-                            <div>
-                                <InputLabel for="operator" value="Operator" />
+                        <div class="flex flex-col gap-8">
+                            <div class="flex gap-6">
+                                <div class="w-1/3">
+                                    <InputLabel for="operator" value="Operator" />
 
-                                <Select
-                                    id="operator"
-                                    :options="operators.data"
-                                    v-model="form.operator_id"
-                                    class="mt-1 block w-full"
-                                    autofocus
-                                    required
-                                />
+                                    <Select
+                                        id="operator"
+                                        :options="operators.data"
+                                        v-model="form.operator_id"
+                                        class="mt-1 block w-full"
+                                        autofocus
+                                        required
+                                    />
+                                </div>
+
+                                <div class="w-1/3">
+                                    <InputLabel for="item_type" value="Item Type" />
+                                    
+                                    <Select
+                                        id="item_type"
+                                        :options="itemTypes.data"
+                                        v-model="form.item_type_id"
+                                        class="mt-1 block w-full"
+                                        required
+                                    />
+                                </div>
+
+                                <div class="w-1/3">
+                                    <InputLabel for="date_time" value="Date and Time" />
+
+                                    <DateTimePicker
+                                        id="date_time"
+                                        class="mt-1 block"
+                                        required
+                                        v-model="form.date_time"
+                                    />
+                                </div>
                             </div>
 
-                            <div class="mt-4">
-                                <InputLabel for="date_time" value="Date and Time" />
-
-                                <DateTimePicker
-                                    id="date_time"
-                                    class="mt-1 block"
-                                    required
-                                    v-model="form.date_time"
-                                />
-                            </div>
-
-                            <div class="mt-4">
-                                <InputLabel for="item_type" value="Item Type" />
-                                
-                                <Select
-                                    id="item_type"
-                                    :options="itemTypes.data"
-                                    v-model="form.item_type_id"
-                                    class="mt-1 block w-full"
-                                    required
-                                />
-                            </div>
-
-                            <div class="mt-4">
-                                <InputLabel for="batch_id" value="Batch ID" />
+                            <div class="flex gap-6">
+                                <div class="w-1/2">
+                                    <InputLabel for="batch_id" value="Batch ID (optional)" />
+        
+                                    <TextInput
+                                        id="batch_id"
+                                        type="text"
+                                        class="mt-1 block w-full"
+                                        v-model="form.batch_id"
+                                    />
+                                </div>
     
-                                <TextInput
-                                    id="batch_id"
-                                    type="text"
-                                    class="mt-1 block w-full"
-                                    v-model="form.batch_id"
-                                    required
-                                />
-                            </div>
-
-                            <div class="mt-4">
-                                <InputLabel for="metrc_id" value="Metric ID" />
-    
-                                <TextInput
-                                    id="metrc_id"
-                                    type="text"
-                                    class="mt-1 block w-full"
-                                    v-model="form.metrc_id"
-                                    required
-                                />
-                            </div>
-
-                            <div class="mt-4">
-                                <InputLabel for="tare_weight" value="Tare Weight" />
-    
-                                <TextInput
-                                    id="tare_weight"
-                                    type="number"
-                                    class="mt-1 block w-full"
-                                    v-model="form.tare_weight"
-                                    required
-                                />
-                            </div>
-
-                            <div class="mt-4">
-                                <InputLabel for="gross_weight" value="Gross Weight" />
-    
-                                <TextInput
-                                    id="gross_weight"
-                                    type="number"
-                                    class="mt-1 block w-full"
-                                    v-model="form.gross_weight"
-                                    required
-                                />
-                            </div>
-
-                            <div class="mt-4">
-                                <InputLabel for="weight_unit" value="Weight Unit" />
-    
-                                <Select
-                                    id="weight_unit"
-                                    :options="weightUnits.data"
-                                    v-model="form.weight_unit_id"
-                                    class="mt-1 block w-full"
-                                    required
-                                />
-                            </div>
-                         
-                            <div class="mt-4">
-                                <InputLabel for="strain" value="Strain" />
-    
-                                <Select
-                                    id="strain"
-                                    :options="strains.data"
-                                    v-model="form.strain_id"
-                                    class="mt-1 block w-full"
-                                    required
-                                />
-                            </div>
-
-                            <div class="mt-4">
-                                <InputLabel for="product" value="Product" />
-    
-                                <Select
-                                    id="product"
-                                    :options="products.data"
-                                    v-model="form.product_id"
-                                    class="mt-1 block w-full"
-                                    required
-                                />
-                            </div>
-
-                            <div class="mt-4">
-                                <InputLabel for="color" value="Color" />
-    
-                                <Select
-                                    id="color"
-                                    :options="colors.data"
-                                    v-model="form.color_id"
-                                    class="mt-1 block w-full"
-                                    required
-                                />
+                                <div class="w-1/2">
+                                    <InputLabel for="metrc_id" value="Metric ID (optional)" />
+        
+                                    <TextInput
+                                        id="metrc_id"
+                                        type="text"
+                                        class="mt-1 block w-full"
+                                        v-model="form.metrc_id"
+                                    />
+                                </div>
                             </div>
                             
-                            <div class="mt-4">
-                                <InputLabel for="clarity" value="Clarity" />
+                            <div class="flex gap-6">
+                                <div class="w-1/2">
+                                    <InputLabel for="tare_weight" value="Tare Weight" />
+        
+                                    <div class="flex gap-4">
+                                        <TextInput
+                                            id="tare_weight"
+                                            type="number"
+                                            class="mt-1 block w-full"
+                                            v-model="form.tare_weight"
+                                            required
+                                        />
 
-                                <Select
-                                    id="clarity"
-                                    :options="clarities.data"
-                                    v-model="form.clarity_id"
-                                    class="mt-1 block w-full"
-                                    required
-                                />
-                            </div>
-
-                            <div class="mt-4">
-                                <InputLabel for="appearance" value="Appearance" />
+                                        <PrimaryButton>Get tare weight</PrimaryButton>
+                                    </div>
+                                </div>
     
-                                <Select
-                                    id="appearance"
-                                    :options="appearances.data"
-                                    v-model="form.appearance_id"
-                                    class="mt-1 block w-full"
-                                    required
-                                />
+                                <div class="w-1/2">
+                                    <InputLabel for="gross_weight" value="Gross Weight" />
+        
+                                    <div class="flex gap-4">
+                                        <TextInput
+                                            id="gross_weight"
+                                            type="number"
+                                            class="mt-1 block w-full"
+                                            v-model="form.gross_weight"
+                                            required
+                                        />
+
+                                        <PrimaryButton>Get gross weight</PrimaryButton>
+                                    </div>
+                                </div>
                             </div>
 
-                            <div class="mt-4">
+                            <div class="flex gap-6">
+                                <div class="w-1/2">
+                                    <InputLabel for="strain" value="Strain" />
+        
+                                    <Select
+                                        id="strain"
+                                        :options="strains.data"
+                                        v-model="form.strain_id"
+                                        class="mt-1 block w-full"
+                                        required
+                                    />
+                                </div>
+    
+                                <div class="w-1/2">
+                                    <InputLabel for="product" value="Product" />
+        
+                                    <Select
+                                        id="product"
+                                        :options="products.data"
+                                        v-model="form.product_id"
+                                        class="mt-1 block w-full"
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            <div class="flex gap-6">
+                                <div class="w-1/3">
+                                    <InputLabel for="color" value="Color (optional)" />
+        
+                                    <Select
+                                        id="color"
+                                        :options="colors.data"
+                                        v-model="form.color_id"
+                                        class="mt-1 block w-full"
+                                    />
+                                </div>
+                                
+                                <div class="w-1/3">
+                                    <InputLabel for="clarity" value="Clarity (optional)" />
+    
+                                    <Select
+                                        id="clarity"
+                                        :options="clarities.data"
+                                        v-model="form.clarity_id"
+                                        class="mt-1 block w-full"
+                                    />
+                                </div>
+    
+                                <div class="w-1/3">
+                                    <InputLabel for="appearance" value="Appearance (optional)" />
+        
+                                    <Select
+                                        id="appearance"
+                                        :options="appearances.data"
+                                        v-model="form.appearance_id"
+                                        class="mt-1 block w-full"
+                                    />
+                                </div>
+                            </div>
+
+                            <div class="flex justify-end gap-6">
                                 <SecondaryButton @click="cancel">Cancel</SecondaryButton>
 
-                                <PrimaryButton class="ms-4" @click="confirmItemCreate">
+                                <PrimaryButton @click="confirmItemCreation">
                                     Save
                                 </PrimaryButton>
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
         <ConfirmationModal :show="showCreateConfirmModal" @close="showCreateConfirmModal = false">
-            <template #title> Create Item </template>
+            <template #title> Confirm </template>
 
             <template #content>
                 Are you sure you would like to create this item?
@@ -278,10 +289,24 @@ const cancel = () => {
                     class="ml-3"
                     :class="{ 'opacity-25': form.processing }"
                     :disabled="form.processing"
-                    @click="submit"
+                    @click="createItem"
                 >
                     Create
                 </PrimaryButton>
+            </template>
+        </ConfirmationModal>
+
+        <ConfirmationModal :show="showContinueModal" @close="showContinueModal = false">
+            <template #title> Confirm </template>
+
+            <template #content>
+                Do you want to continue adding item?
+            </template>
+
+            <template #footer>
+                <SecondaryButton @click="showContinueModal = false"> No </SecondaryButton>
+
+                <PrimaryButton class="ml-3" @click="continueCreation"> Yes </PrimaryButton>
             </template>
         </ConfirmationModal>
     </AuthenticatedLayout>

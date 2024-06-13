@@ -73,45 +73,51 @@ class ItemController extends Controller
      */
     public function store(ItemStoreRequest $request)
     {
-        $validatedData = $request->validated();
+        $validated_data = $request->validated();
 
         $config = Config::first();
         $serial_number = $config->last_serial_number + 1;
         $config->update(['last_serial_number' => $serial_number]);
         
-        $formattedDate = Carbon::parse($validatedData['date_time'])->format('Y-m-d H:i:s');
-        $item = Item::create([
-            'operator_id' => $validatedData['operator_id'],
+        $formattedDate = Carbon::parse($validated_data['date_time'])->format('Y-m-d H:i:s');
+
+        $item_data = [
+            'operator_id' => $validated_data['operator_id'],
             'date_time' => $formattedDate,
             'serial_number' => $serial_number,
-            'item_type_id' => $validatedData['item_type_id'],
-            'batch_id' => $validatedData['batch_id'],
-            'metrc_id' => $validatedData['metrc_id'],
-            'tare_weight' => $validatedData['tare_weight'],
-            'gross_weight' => $validatedData['gross_weight'],
-            'weight_unit_id' => $validatedData['weight_unit_id'],
-            'strain_id' => $validatedData['strain_id'],
-            'product_id' => $validatedData['product_id'],
-            'color_id' => $validatedData['color_id'],
-            'clarity_id' => $validatedData['clarity_id'],
-            'appearance_id' => $validatedData['appearance_id'],
-        ]);
+            'item_type_id' => $validated_data['item_type_id'],
+            'batch_id'=> '',
+            'metrc_id'=> '',
+            'tare_weight' => $validated_data['tare_weight'],
+            'gross_weight' => $validated_data['gross_weight'],
+            'strain_id' => $validated_data['strain_id'],
+            'product_id' => $validated_data['product_id'],
+            'color_id'=> 1,
+            'clarity_id'=> 1,
+            'appearance_id'=> 1,
+        ];
+
+        if ($validated_data['batch_id'] !== null) $item_data['batch_id'] = $validated_data['batch_id'];
+        if ($validated_data['metrc_id'] !== null) $item_data['metrc_id'] = $validated_data['metrc_id'];
+        if ($validated_data['color_id'] !== null) $item_data['color_id'] = $validated_data['color_id'];
+        if ($validated_data['clarity_id'] !== null) $item_data['clarity_id'] = $validated_data['clarity_id'];
+        if ($validated_data['appearance_id'] !== null) $item_data['appearance_id'] = $validated_data['appearance_id'];
+        $item = Item::create($item_data);
 
         $item->weights()->create([
             'date_time' => $formattedDate,
-            'operator_id'=> $validatedData['operator_id'],
-            'gross_weight' => $validatedData['gross_weight'],
+            'operator_id'=> $validated_data['operator_id'],
+            'gross_weight' => $validated_data['gross_weight'],
             'note' => $request->note,
         ]);
 
         $item->statuses()->create([
             'date_time' => $formattedDate,
-            'operator_id'=> $validatedData['operator_id'],
+            'operator_id'=> $validated_data['operator_id'],
             'status_id' => Status::where('status', 'IN')->first()->id,
             'note' => $request->note,
         ]);
-
-        return redirect()->route('items.index')->with('success', 'Item has been created!');
+        // return redirect()->route('items.index')->with('success', 'Item has been created!');
     }
 
     /**

@@ -19,7 +19,6 @@ class Item extends Model
         'metrc_id',
         'tare_weight',
         'gross_weight',
-        'weight_unit_id',
         'strain_id',
         'product_id',
         'color_id',

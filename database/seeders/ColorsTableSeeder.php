@@ -14,7 +14,7 @@ class ColorsTableSeeder extends Seeder
     public function run(): void
     {
         DB::table('colors')->insert([
-            ['color' => 'N/A'],
+            ['color' => ''],
             ['color' => 'LIGHT'],
             ['color' => 'YELLOW'],
             ['color' => 'CREAM'],

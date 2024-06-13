@@ -14,7 +14,7 @@ class AppearancesTableSeeder extends Seeder
     public function run(): void
     {
         DB::table('appearances')->insert([
-            ['appearance' => 'N/A'],
+            ['appearance' => ''],
             ['appearance' => 'Very Wet'],
             ['appearance' => 'Wet'],
             ['appearance' => 'Slightly Wet'],
