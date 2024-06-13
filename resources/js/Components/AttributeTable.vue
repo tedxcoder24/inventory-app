@@ -1,6 +1,10 @@
 <script setup>
+import { ref } from 'vue';
 import { router } from '@inertiajs/vue3';
 import { Link } from '@inertiajs/vue3';
+import ConfirmationModal from './ConfirmationModal.vue';
+import DangerButton from './DangerButton.vue';
+import SecondaryButton from './SecondaryButton.vue';
 
 const props = defineProps({
     header: {
@@ -13,6 +17,14 @@ const props = defineProps({
     },
 });
 
+const attrToDelete = ref(null);
+const showModal = ref(false);
+
+const confirmAttributeDeletion = (attr) => {
+    showModal.value = true;
+    attrToDelete.value = attr
+}
+
 const updateAttribute = (attr) => {
     router.put(route('attributes.update', attr.value), {
         enabled: attr.enabled ? false : true,
@@ -20,12 +32,14 @@ const updateAttribute = (attr) => {
     });
 }
 
-const deleteAttr = (attr) => {
-    if (!confirm("Are you sure want to delete attribute?")) return;
-
-    router.post(route('attribute.delete'), {
-        attribute: attr,
+const deleteAttr = () => {
+    router.post(route('attributes.delete'), {
+        attribute: attrToDelete.value,
         table: props.header,
+    }, {
+        preserveScroll: true,
+        preserveState: true,
+        onSuccess: () => (showModal.value = false)
     });
 }
 </script>
@@ -104,7 +118,7 @@ const deleteAttr = (attr) => {
                         </Link>
                         <a
                             href="#"
-                            @click="deleteAttr(attr)"
+                            @click="confirmAttributeDeletion(attr)"
                             class="float-left px-4 py-2 ml-2 text-red-400 duration-100 rounded hover:text-red-600"
                         >
                             <svg
@@ -127,4 +141,23 @@ const deleteAttr = (attr) => {
             </tr>
         </tbody>
     </table>
+
+    <ConfirmationModal :show="showModal" @close="showModal = false">
+        <template #title> Delete attribute </template>
+
+        <template #content>
+            Are you sure you would like to delete this attribute?
+        </template>
+
+        <template #footer>
+            <SecondaryButton @click="showModal = false"> Cancel </SecondaryButton>
+
+            <DangerButton
+                class="ml-3"
+                @click="deleteAttr(attr)"
+            >
+                Delete
+            </DangerButton>
+        </template>
+    </ConfirmationModal>
 </template>
