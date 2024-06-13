@@ -38,18 +38,13 @@ defineProps({
                         <div class="flex justify-between gap-8">
                             <div class="w-full">
                                 <div class="flex flex-col justify-between items-center gap-6">
+                                    <div class="text-lg font-medium text-gray-900"> Serial Number: {{ item.serial_number }} </div>
                                     <div class="text-lg font-medium text-gray-900"> Operator: {{ item.operator.operator }} </div>
-        
                                     <div class="text-lg font-medium text-gray-900"> Item Type: {{ item.item_type.item_type }} </div>
-        
                                     <div class="text-lg font-medium text-gray-900"> Strain: {{ item.strain.strain }} </div>
-    
                                     <div class="text-lg font-medium text-gray-900"> Product: {{ item.product.product }} </div>
-        
                                     <div class="text-lg font-medium text-gray-900"> Color: {{ item.color.color }} </div>
-        
                                     <div class="text-lg font-medium text-gray-900"> Clarity: {{ item.clarity.clarity }} </div>
-        
                                     <div class="text-lg font-medium text-gray-900"> Appearance: {{ item.appearance.appearance }} </div>
                                 </div>
                             </div>
