@@ -42,6 +42,7 @@ defineProps({
 });
 
 const showCreateConfirmModal = ref(false);
+const showContinueModal = ref(false);
 
 const form = useForm({
     operator_id: 0,
@@ -58,16 +59,30 @@ const form = useForm({
     appearance_id: 0,
 });
 
-const confirmItemCreate = () => {
+const confirmItemCreation = () => {
     showCreateConfirmModal.value = true;
 }
 
-const submit = () => {
-    if (!confirm("Are you sure want to save item?")) return;
-
+const createItem = () => {
     form.post(route('items.store'), {
-        onFinish: () => form.reset('operator'),
+        onFinish: () => {
+            showCreateConfirmModal.value = false;
+            showContinueModal.value = true;
+        },
     });
+}
+
+const continueCreation = () => {
+    form.date_time = new Date();
+    form.batch_id = '';
+    form.metrc_id = '';
+    form.tare_weight = 0;
+    form.gross_weight = 0;
+    form.color_id = '';
+    form.clarity_id = '';
+    form.appearance_id = '';
+
+    showContinueModal.value = false;
 }
 
 const cancel = () => {
@@ -89,7 +104,7 @@ const cancel = () => {
                     <div class="p-6">
                         <p class="text-gray-900 mb-6">Select attributes for an item.</p>
 
-                        <form @submit.prevent="submit">
+                        <div>
                             <div>
                                 <InputLabel for="operator" value="Operator" />
 
@@ -127,26 +142,24 @@ const cancel = () => {
                             </div>
 
                             <div class="mt-4">
-                                <InputLabel for="batch_id" value="Batch ID" />
+                                <InputLabel for="batch_id" value="Batch ID (optional)" />
     
                                 <TextInput
                                     id="batch_id"
                                     type="text"
                                     class="mt-1 block w-full"
                                     v-model="form.batch_id"
-                                    required
                                 />
                             </div>
 
                             <div class="mt-4">
-                                <InputLabel for="metrc_id" value="Metric ID" />
+                                <InputLabel for="metrc_id" value="Metric ID (optional)" />
     
                                 <TextInput
                                     id="metrc_id"
                                     type="text"
                                     class="mt-1 block w-full"
                                     v-model="form.metrc_id"
-                                    required
                                 />
                             </div>
 
@@ -199,56 +212,53 @@ const cancel = () => {
                             </div>
 
                             <div class="mt-4">
-                                <InputLabel for="color" value="Color" />
+                                <InputLabel for="color" value="Color (optional)" />
     
                                 <Select
                                     id="color"
                                     :options="colors.data"
                                     v-model="form.color_id"
                                     class="mt-1 block w-full"
-                                    required
                                 />
                             </div>
                             
                             <div class="mt-4">
-                                <InputLabel for="clarity" value="Clarity" />
+                                <InputLabel for="clarity" value="Clarity (optional)" />
 
                                 <Select
                                     id="clarity"
                                     :options="clarities.data"
                                     v-model="form.clarity_id"
                                     class="mt-1 block w-full"
-                                    required
                                 />
                             </div>
 
                             <div class="mt-4">
-                                <InputLabel for="appearance" value="Appearance" />
+                                <InputLabel for="appearance" value="Appearance (optional)" />
     
                                 <Select
                                     id="appearance"
                                     :options="appearances.data"
                                     v-model="form.appearance_id"
                                     class="mt-1 block w-full"
-                                    required
                                 />
                             </div>
 
                             <div class="mt-4">
                                 <SecondaryButton @click="cancel">Cancel</SecondaryButton>
 
-                                <PrimaryButton class="ms-4" @click="confirmItemCreate">
+                                <PrimaryButton class="ms-4" @click="confirmItemCreation">
                                     Save
                                 </PrimaryButton>
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
         <ConfirmationModal :show="showCreateConfirmModal" @close="showCreateConfirmModal = false">
-            <template #title> Create Item </template>
+            <template #title> Confirm </template>
 
             <template #content>
                 Are you sure you would like to create this item?
@@ -261,10 +271,24 @@ const cancel = () => {
                     class="ml-3"
                     :class="{ 'opacity-25': form.processing }"
                     :disabled="form.processing"
-                    @click="submit"
+                    @click="createItem"
                 >
                     Create
                 </PrimaryButton>
+            </template>
+        </ConfirmationModal>
+
+        <ConfirmationModal :show="showContinueModal" @close="showContinueModal = false">
+            <template #title> Confirm </template>
+
+            <template #content>
+                Do you want to continue adding item?
+            </template>
+
+            <template #footer>
+                <SecondaryButton @click="showContinueModal = false"> No </SecondaryButton>
+
+                <PrimaryButton class="ml-3" @click="continueCreation"> Yes </PrimaryButton>
             </template>
         </ConfirmationModal>
     </AuthenticatedLayout>
