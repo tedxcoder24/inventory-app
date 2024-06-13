@@ -45,18 +45,18 @@ const showCreateConfirmModal = ref(false);
 // const showContinueModal = ref(false);
 
 const form = useForm({
-    operator_id: 0,
+    operator_id: "1",
     date_time: new Date(),
-    item_type_id: 0,
-    batch_id: '',
-    metrc_id: '',
+    item_type_id: "1",
+    batch_id: "",
+    metrc_id: "",
     tare_weight: 0,
     gross_weight: 0,
-    strain_id: 0,
-    product_id: 0,
-    color_id: 0,
-    clarity_id: 0,
-    appearance_id: 0,
+    strain_id: "1",
+    product_id: "1",
+    color_id: "",
+    clarity_id: "",
+    appearance_id: "",
 });
 
 const confirmItemCreation = () => {
@@ -180,40 +180,6 @@ const cancel = () => {
                                     />
                                 </div>
                             </div>
-                            
-                            <div class="flex gap-6">
-                                <div class="w-1/2">
-                                    <InputLabel for="tare_weight" value="Tare Weight" />
-        
-                                    <div class="flex gap-4">
-                                        <TextInput
-                                            id="tare_weight"
-                                            type="number"
-                                            class="mt-1 block w-full"
-                                            v-model="form.tare_weight"
-                                            required
-                                        />
-
-                                        <PrimaryButton>Get tare weight</PrimaryButton>
-                                    </div>
-                                </div>
-    
-                                <div class="w-1/2">
-                                    <InputLabel for="gross_weight" value="Gross Weight" />
-        
-                                    <div class="flex gap-4">
-                                        <TextInput
-                                            id="gross_weight"
-                                            type="number"
-                                            class="mt-1 block w-full"
-                                            v-model="form.gross_weight"
-                                            required
-                                        />
-
-                                        <PrimaryButton>Get gross weight</PrimaryButton>
-                                    </div>
-                                </div>
-                            </div>
 
                             <div class="flex gap-6">
                                 <div class="w-1/2">
@@ -238,6 +204,40 @@ const cancel = () => {
                                         class="mt-1 block w-full"
                                         required
                                     />
+                                </div>
+                            </div>
+
+                            <div class="flex gap-6">
+                                <div class="w-1/2">
+                                    <InputLabel for="tare_weight" :value="`Tare Weight (${itemTypes.data[form.item_type_id - 1] ? itemTypes.data[form.item_type_id - 1]?.weight_unit.abbreviation : ''})`" />
+        
+                                    <div class="flex gap-4">
+                                        <TextInput
+                                            id="tare_weight"
+                                            type="number"
+                                            class="mt-1 block w-full"
+                                            v-model="form.tare_weight"
+                                            required
+                                        />
+
+                                        <PrimaryButton>Get tare weight</PrimaryButton>
+                                    </div>
+                                </div>
+    
+                                <div class="w-1/2">
+                                    <InputLabel for="gross_weight" :value="`Gross Weight (${itemTypes.data[form.item_type_id - 1] ? itemTypes.data[form.item_type_id - 1]?.weight_unit.abbreviation : ''})`" />
+        
+                                    <div class="flex gap-4">
+                                        <TextInput
+                                            id="gross_weight"
+                                            type="number"
+                                            class="mt-1 block w-full"
+                                            v-model="form.gross_weight"
+                                            required
+                                        />
+
+                                        <PrimaryButton>Get gross weight</PrimaryButton>
+                                    </div>
                                 </div>
                             </div>
 

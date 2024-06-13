@@ -8,7 +8,7 @@ const props = defineProps({
     modelValue: {
         type: Date,
         required: false,
-        default: () => new Date(),
+        default: () => format(new Date(), 'yyyy-MM-dd HH:mm:ss'),
     },
     config: {
         type: Object,
