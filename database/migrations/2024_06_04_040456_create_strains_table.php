@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('strain', 30);
             $table->boolean('enabled')->default(true);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

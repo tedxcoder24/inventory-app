@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('product', 20);
             $table->boolean('enabled')->default(true);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

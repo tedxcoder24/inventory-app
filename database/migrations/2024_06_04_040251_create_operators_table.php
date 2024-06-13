@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('operator', 30);
             $table->boolean('enabled')->default(true);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

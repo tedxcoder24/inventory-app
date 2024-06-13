@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class ShareUserRole
+class ShareUserDetails
 {
     /**
      * Handle an incoming request.
@@ -16,7 +16,13 @@ class ShareUserRole
     public function handle(Request $request, Closure $next): Response
     {
         if ($request->user()) {
-            inertia()->share('auth.user.role', $request->user()->getRoleNames()->first());
+            $user = $request->user();
+            inertia()->share('auth.user', [
+                'id'=> $user->id,
+                'name' => $user->name,
+                'email'=> $user->email,
+                'role' => $user->getRoleNames()->first(),
+            ]);
         }
 
         return $next($request);

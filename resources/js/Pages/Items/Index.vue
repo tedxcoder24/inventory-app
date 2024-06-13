@@ -10,6 +10,7 @@ import InputLabel from '@/Components/InputLabel.vue';
 import Select from '@/Components/Select.vue';
 import TextInput from '@/Components/TextInput.vue';
 import DateTimePicker from '@/Components/DateTimePicker.vue';
+import SearchInput from '@/Components/SearchInput.vue';
 
 const props = defineProps({
     items: {
@@ -108,7 +109,8 @@ const updateItems = () => {
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 flex flex-col gap-8">
                         <div class="flex justify-end">
-                            <PrimaryButton class="hover:cursor-pointer" :disabled="selectedItems.length === 0" :class="{ 'hover:cursor-not-allowed': selectedItems.length === 0 }" @click="batchEdit">Batch Edit</PrimaryButton>
+                            <SearchInput />
+                            <PrimaryButton class="ms-4 hover:cursor-pointer" :disabled="selectedItems.length === 0" :class="{ 'hover:cursor-not-allowed': selectedItems.length === 0 }" @click="batchEdit">Batch Edit</PrimaryButton>
                         </div>
                         <div class="flex justify-center">
                             <table class="block overflow-y-auto whitespace-nowrap divide-y divide-gray-200">

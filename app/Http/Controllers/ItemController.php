@@ -26,8 +26,6 @@ use App\Models\Product;
 use App\Models\Color;
 use App\Models\Clarity;
 use App\Models\Appearance;
-use App\Models\ChangeItemWeight;
-use App\Models\ChangeItemStatus;
 use App\Models\Status;
 use App\Models\Config;
 
@@ -36,10 +34,17 @@ class ItemController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $query = $request->input('query');
+        if ($query) {
+            $items = ItemResource::collection(Item::where('serial_number', 'like', '%' . $query . '%')->get());
+        } else {
+            $items = ItemResource::collection(Item::all());
+        }
+
         return Inertia::render('Items/Index', [
-            'items' => ItemResource::collection(Item::all()),
+            'items' => $items,
             'statuses' => StatusResource::collection(Status::all()),
             'operators' => OperatorResource::collection(Operator::all()),
         ]);

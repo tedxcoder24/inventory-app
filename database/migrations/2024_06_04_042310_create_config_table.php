@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('report_printer', 100);
             $table->string('image_directory', 250);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
