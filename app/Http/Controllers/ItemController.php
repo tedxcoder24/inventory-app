@@ -151,7 +151,6 @@ class ItemController extends Controller
             'item' => $item,
             'operators' => OperatorResource::collection(Operator::where('enabled', true)->get()),
             'itemTypes' => ItemTypeResource::collection(ItemType::where('enabled', true)->get()),
-            'weightUnits' => WeightUnitResource::collection(WeightUnit::all()),
             'strains' => StrainResource::collection(Strain::where('enabled', true)->get()),
             'products' => ProductResource::collection(Product::where('enabled', true)->get()),
             'colors' => ColorResource::collection(Color::where('enabled', true)->get()),
