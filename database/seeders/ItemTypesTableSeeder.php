@@ -14,10 +14,19 @@ class ItemTypesTableSeeder extends Seeder
     public function run(): void
     {
         DB::table('item_types')->insert([
-            ['item_type' => 'Jar'],
-            ['item_type' => 'Pack'],
-            ['item_type' => 'Case'],
-            ['item_type' => 'Bag'],
+            [
+                'item_type' => 'Jar',
+                'weight_unit_id'=> 1,
+            ],[
+                'item_type' => 'Pack',
+                'weight_unit_id'=> 2,
+            ],[
+                'item_type' => 'Case',
+                'weight_unit_id'=> 3,
+            ],[
+                'item_type' => 'Bag',
+                'weight_unit_id'=> 4,
+            ],
         ]);
     }
 }

@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('item_types', function (Blueprint $table) {
             $table->id();
             $table->string('item_type');
+            $table->foreignId('weight_unit_id')->constrained();
             $table->boolean('enabled')->default(true);
             $table->timestamps();
             $table->softDeletes();

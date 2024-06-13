@@ -21,7 +21,6 @@ return new class extends Migration
             $table->string('metrc_id', 25);
             $table->float('tare_weight', 8, 2)->unsigned();
             $table->float('gross_weight', 8, 2)->unsigned();
-            $table->foreignId('weight_unit_id')->constrained();
             $table->foreignId('strain_id')->constrained();
             $table->foreignId('product_id')->constrained();
             $table->foreignId('color_id')->constrained();
