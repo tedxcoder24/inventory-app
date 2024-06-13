@@ -33,7 +33,6 @@ class ItemResource extends JsonResource
             'metrc_id' => $this->metrc_id,
             'tare_weight' => $this->tare_weight,
             'gross_weight' => $this->gross_weight,
-            'weight_unit' => WeightUnit::where('id', $this->weight_unit_id)->first()->weight_unit,
             'strain' => Strain::where('id', $this->strain_id)->first()->strain,
             'product' => Product::where('id', $this->product_id)->first()->product,
             'color' => Color::where('id', $this->color_id)->first()->color,

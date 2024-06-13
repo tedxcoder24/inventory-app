@@ -19,10 +19,6 @@ defineProps({
         type: Object,
         required: true,
     },
-    weightUnits: {
-        type: Object,
-        required: true,
-    },
     strains: {
         type: Object,
         required: true,
@@ -55,7 +51,6 @@ const form = useForm({
     metrc_id: '',
     tare_weight: 0,
     gross_weight: 0,
-    weight_unit_id: 0,
     strain_id: 0,
     product_id: 0,
     color_id: 0,
@@ -175,18 +170,6 @@ const cancel = () => {
                                     type="number"
                                     class="mt-1 block w-full"
                                     v-model="form.gross_weight"
-                                    required
-                                />
-                            </div>
-
-                            <div class="mt-4">
-                                <InputLabel for="weight_unit" value="Weight Unit" />
-    
-                                <Select
-                                    id="weight_unit"
-                                    :options="weightUnits.data"
-                                    v-model="form.weight_unit_id"
-                                    class="mt-1 block w-full"
                                     required
                                 />
                             </div>

@@ -89,7 +89,6 @@ class ItemController extends Controller
             'metrc_id' => $validatedData['metrc_id'],
             'tare_weight' => $validatedData['tare_weight'],
             'gross_weight' => $validatedData['gross_weight'],
-            'weight_unit_id' => $validatedData['weight_unit_id'],
             'strain_id' => $validatedData['strain_id'],
             'product_id' => $validatedData['product_id'],
             'color_id' => $validatedData['color_id'],

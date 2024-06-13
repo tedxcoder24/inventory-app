@@ -29,7 +29,6 @@ class ItemStoreRequest extends FormRequest
             'metrc_id'=> 'nullable|string|max:25',
             'tare_weight'=> 'required|numeric|min:0',
             'gross_weight'=> 'required|numeric|min:0',
-            'weight_unit_id' => 'required|exists:weight_units,id',
             'strain_id'=> 'required|exists:strains,id',
             'product_id'=> 'required|exists:products,id',
             'color_id'=> 'nullable|exists:colors,id',
