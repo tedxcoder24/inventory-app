@@ -42,7 +42,7 @@ defineProps({
 });
 
 const showCreateConfirmModal = ref(false);
-const showContinueModal = ref(false);
+// const showContinueModal = ref(false);
 
 const form = useForm({
     operator_id: 0,
@@ -67,7 +67,16 @@ const createItem = () => {
     form.post(route('items.store'), {
         onFinish: () => {
             showCreateConfirmModal.value = false;
-            showContinueModal.value = true;
+
+            form.date_time = new Date();
+            form.batch_id = '';
+            form.metrc_id = '';
+            form.tare_weight = 0;
+            form.gross_weight = 0;
+            form.color_id = '';
+            form.clarity_id = '';
+            form.appearance_id = '';
+            // showContinueModal.value = true;
         },
     });
 }
@@ -301,7 +310,7 @@ const cancel = () => {
             </template>
         </ConfirmationModal>
 
-        <ConfirmationModal :show="showContinueModal" @close="showContinueModal = false">
+        <!-- <ConfirmationModal :show="showContinueModal" @close="showContinueModal = false">
             <template #title> Confirm </template>
 
             <template #content>
@@ -313,6 +322,6 @@ const cancel = () => {
 
                 <PrimaryButton class="ml-3" @click="continueCreation"> Yes </PrimaryButton>
             </template>
-        </ConfirmationModal>
+        </ConfirmationModal> -->
     </AuthenticatedLayout>
 </template>
