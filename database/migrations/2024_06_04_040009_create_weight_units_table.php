@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('weight_unit', 20);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

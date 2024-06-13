@@ -42,6 +42,8 @@ Route::middleware('auth')->group(function () {
     Route::post('items/change-status', [ItemController::class, 'batchChangeStatus'])->name('item.batch-change-status');
 
     Route::resource('/attributes', AttributeController::class)->middleware('role:admin');
+    Route::post('/attributes/delete', [AttributeController::class,'delete'])->name('attribute.delete');
+    
     Route::resource('/config', ConfigController::class)->middleware('role:admin');
 });
 

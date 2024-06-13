@@ -83,44 +83,28 @@ class AttributeController extends Controller
     {
         switch ($request->attribute) {
             case 'Operator':
-                Operator::findOrFail($id)->update([
-                    'enabled' => $request->enabled,
-                ]);
+                Operator::findOrFail($id)->delete();
                 break;
             case 'Item Type':
-                ItemType::findOrFail($id)->update([
-                    'enabled' => $request->enabled,
-                ]);
+                ItemType::findOrFail($id)->delete();
                 break;
             case 'Strain':
-                Strain::findOrFail($id)->update([
-                    'enabled' => $request->enabled,
-                ]);
+                Strain::findOrFail($id)->delete();
                 break;
             case 'Product':
-                Product::findOrFail($id)->update([
-                    'enabled' => $request->enabled,
-                ]);
+                Product::findOrFail($id)->delete();
                 break;
             case 'Color':
-                Color::findOrFail($id)->update([
-                    'enabled' => $request->enabled,
-                ]);
+                Color::findOrFail($id)->delete();
                 break;
             case 'Clarity':
-                Clarity::findOrFail($id)->update([
-                    'enabled' => $request->enabled,
-                ]);
+                Clarity::findOrFail($id)->delete();
                 break;
             case 'Appearance':
-                Appearance::findOrFail($id)->update([
-                    'enabled' => $request->enabled,
-                ]);
+                Appearance::findOrFail($id)->delete();
                 break;
             case 'Status':
-                Status::findOrFail($id)->update([
-                    'enabled' => $request->enabled,
-                ]);
+                Status::findOrFail($id)->delete();
                 break;
         }
     }
@@ -131,5 +115,41 @@ class AttributeController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function delete(Request $request)
+    {
+        $attribute = $request->input('attribute');
+        $id = $attribute['value'];
+        $table = $request->input('table');
+
+        switch ($table) {
+            case 'Operator':
+                Operator::findOrFail($id)->delete();
+                break;
+            case 'Item Type':
+                ItemType::findOrFail($id)->delete();
+                break;
+            case 'Strain':
+                Strain::findOrFail($id)->delete();
+                break;
+            case 'Product':
+                Product::findOrFail($id)->delete();
+                break;
+            case 'Color':
+                Color::findOrFail($id)->delete();
+                break;
+            case 'Clarity':
+                Clarity::findOrFail($id)->delete();
+                break;
+            case 'Appearance':
+                Appearance::findOrFail($id)->delete();
+                break;
+            case 'Status':
+                Status::findOrFail($id)->delete();
+                break;
+        }
+
+        return back()->with('delete', 'Item has been deleted!');
     }
 }
