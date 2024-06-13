@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue';
-import { Head, useForm } from '@inertiajs/vue3';
+import { Head, router, useForm } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
@@ -83,6 +83,11 @@ const continueCreation = () => {
     form.appearance_id = '';
 
     showContinueModal.value = false;
+}
+
+const cancelCreation = () => {
+    showContinueModal.value = false;
+    router.get(route('items.index'));
 }
 
 const cancel = () => {
@@ -304,7 +309,7 @@ const cancel = () => {
             </template>
 
             <template #footer>
-                <SecondaryButton @click="showContinueModal = false"> No </SecondaryButton>
+                <SecondaryButton @click="cancelCreation"> No </SecondaryButton>
 
                 <PrimaryButton class="ml-3" @click="continueCreation"> Yes </PrimaryButton>
             </template>
