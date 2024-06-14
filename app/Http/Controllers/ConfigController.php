@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ConfigStoreRequest;
 use App\Http\Resources\ConfigResource;
 use App\Models\Config;
 use Illuminate\Http\Request;
@@ -48,15 +49,21 @@ class ConfigController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        return Inertia::render('Config/Edit', [
+            'config_data' => ConfigResource::collection(Config::all()),
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(ConfigStoreRequest $request, string $id)
     {
-        //
+        $validted_data = $request->validated();
+
+        Config::findOrFail($id)->update($validted_data);
+
+        return redirect('/config')->with('success','Config has been updated!');
     }
 
     /**

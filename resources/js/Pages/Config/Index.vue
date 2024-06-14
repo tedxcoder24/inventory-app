@@ -1,5 +1,5 @@
 <script setup>
-import { Head } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 
 defineProps({
@@ -15,7 +15,17 @@ defineProps({
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Config</h2>
+            <div class="flex justify-between">
+                <div>
+                    <h2 class="font-semibold text-xl text-gray-800 leading-tight">Config</h2>
+                </div>
+                <Link 
+                    href="/config/1/edit"
+                    class="px-4 py-2 mr-3 text-sm text-green-600 transition border border-green-300 rounded-full hover:bg-green-600 hover:text-white hover:border-transparent hover:cursor-pointer"
+                >
+                    Edit
+                </Link>
+            </div>
         </template>
 
         <div class="py-12">
