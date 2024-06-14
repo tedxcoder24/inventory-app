@@ -44,6 +44,10 @@ const props = defineProps({
         type: Object,
         required: true,
     },
+    itemStatus: {
+        type: Object,
+        required: true,
+    },
 });
 
 const form = useForm({
@@ -59,6 +63,7 @@ const form = useForm({
     color_id: props.item.color_id,
     clarity_id: props.item.clarity_id,
     appearance_id: props.item.appearance_id,
+    status_id: props.itemStatus.id,
 });
 
 const showModal = ref(false);
@@ -121,6 +126,20 @@ const cancel = () => {
                                         class="mt-1 block"
                                         required
                                         v-model="form.date_time"
+                                    />
+                                </div>
+                            </div>
+
+                            <div class="flex gap-6">
+                                <div>
+                                    <InputLabel for="status" value="Status" />
+        
+                                    <Select
+                                        id="status"
+                                        :options="statuses.data"
+                                        v-model="form.status_id"
+                                        class="mt-1 block w-full"
+                                        required
                                     />
                                 </div>
                             </div>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\ItemResource;
 use App\Models\ChangeItemStatus;
 use App\Models\Item;
+use App\Models\ItemChange;
 use App\Models\Product;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -14,8 +15,8 @@ class DashboardController extends Controller
 {
     public function index(Request $request)
     {
-        $from_date_time = $request->input('from_date_time', []);
-        $to_date_time = $request->input("to_date_time", []);
+        $from_date_time = $request->input('from_date_time');
+        $to_date_time = $request->input("to_date_time");
 
         $from_date = isset($from_date_time) ? Carbon::parse($from_date_time) : Carbon::now()->startOfWeek();
         $to_date = isset($to_date_time) ? Carbon::parse($to_date_time) : Carbon::now()->endOfWeek();
@@ -40,43 +41,52 @@ class DashboardController extends Controller
             "end" => Carbon::now()->subMonth()->endOfMonth(),
         ];
 
-        $inventories = ChangeItemStatus::whereBetween('date_time', [$from_date, $to_date])
-            ->with(['status', 'changeable.product'])
+        $inventories = ItemChange::whereBetween("date_time", [$from_date, $to_date])
+            ->with(['status', 'item.product'])
             ->get()
-            ->groupBy('changeable.product.product')
+            ->groupBy('item.product.product')
             ->map(function ($items, $productId) {
-                $product = $items->first()->changeable->product;
                 $statuses = $items->groupBy('status_id')
                     ->map(function ($statusItems, $statusId) {
                         $status = $statusItems->first()->status;
                         $totalWeight = $statusItems->reduce(function ($carry, $item) {
-                            $weight = $item->changeable->gross_weight;
-                            // $weightUnit = $item->changeable->weightUnit->weight_unit;
-                            // if ($weightUnit === 'Grams') {
-                            //     $carry['grams'] += $weight;
-                            // } elseif ($weightUnit === 'Lbs') {
-                            //     $carry['lbs'] += $weight;
-                            // } elseif ($weightUnit === 'Jars') {
-                            //     $carry['jars'] += $weight;
-                            // }
-                            $carry['grams'] += $weight;
-                            $carry['lbs'] += $weight;
-                            $carry['jars'] += $weight;
+                            $weight = $item->gross_weight;
+                            $weightUnit = $item->item->itemType->weightUnit->weight_unit;
+                            if ($weightUnit === 'Grams') {
+                                $carry['g'] += $weight;
+                                $carry['lbs'] += $weight * 0.00220462;
+                                $carry['kg'] += $weight * 0.001;
+                                $carry['oz'] += $weight * 0.035274;
+                            } elseif ($weightUnit === 'Kilograms') {
+                                $carry['kg'] += $weight;
+                                $carry['g'] += $weight * 1000;
+                                $carry['lbs'] += $weight * 2.20462;
+                                $carry['oz'] += $weight * 35.274;
+                            } elseif ($weightUnit === 'Ounce') {
+                                $carry['oz'] += $weight;
+                                $carry['g'] += $weight * 28.3495;
+                                $carry['kg'] += $weight * 0.0283495;
+                                $carry['lbs'] += $weight * 0.0625;
+                            } elseif ($weightUnit === 'Pounds') {
+                                $carry['lbs'] += $weight;
+                                $carry['g'] += $weight * 453.592;
+                                $carry['kg'] += $weight * 0.453592;
+                                $carry['lbs'] += $weight * 2.20462;
+                            }
                             return $carry;
-                        }, ['grams' => 0, 'lbs' => 0, 'jars' => 0]);
+                        }, ['g' => 0, 'kg' => 0, 'lbs' => 0, 'oz' => 0]);
                         return [
                             'status' => $status,
                             'totalWeight' => $totalWeight
                         ];
                     });
                 return [
-                    'product' => $product,
                     'statuses' => $statuses
                 ];
             });
 
         $products = Product::with([
-            'items.statuses.status'
+            'items.changeHistories'
         ])->get();
 
         $last_items = Item::whereBetween('date_time', [$last_week['start'], $last_week['end']])->with(['statuses'])->get();

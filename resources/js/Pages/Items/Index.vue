@@ -151,6 +151,9 @@ const updateItems = () => {
                                             Gross Weight
                                         </th>
                                         <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
+                                            Net Weight
+                                        </th>
+                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
                                             Strain
                                         </th>
                                         <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
@@ -250,6 +253,15 @@ const updateItems = () => {
                                                 <div>
                                                     <div class="text-sm font-medium text-gray-900">
                                                         {{ item.gross_weight }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center justify-center">
+                                                <div>
+                                                    <div class="text-sm font-medium text-gray-900">
+                                                        {{ item.gross_weight - item.tare_weight }}
                                                     </div>
                                                 </div>
                                             </div>
