@@ -11,6 +11,8 @@ import Select from '@/Components/Select.vue';
 import TextInput from '@/Components/TextInput.vue';
 import DateTimePicker from '@/Components/DateTimePicker.vue';
 import SearchInput from '@/Components/SearchInput.vue';
+import ConfirmationModal from '@/Components/ConfirmationModal.vue';
+import DangerButton from '@/Components/DangerButton.vue';
 
 const props = defineProps({
     items: {
@@ -65,10 +67,15 @@ const updateSelectedItems = (value) => {
   selectedItems.value = value;
 };
 
-const deleteItem = (item) => {
-    if (!confirm("Are you sure want to delete item?")) return;
+const showDeleteConfirmModal = ref(false);
+const itemToDelete = ref();
 
-    router.delete(route('items.destroy', item.id));
+const deleteItem = () => {
+    router.delete(route('items.destroy', itemToDelete.value.id), {
+        onFinish: () => {
+            showDeleteConfirmModal.value = false;
+        }
+    });
 }
 
 const batchEdit = () => {
@@ -149,6 +156,9 @@ const updateItems = () => {
                                         </th>
                                         <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
                                             Gross Weight
+                                        </th>
+                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
+                                            Net Weight
                                         </th>
                                         <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
                                             Strain
@@ -258,6 +268,15 @@ const updateItems = () => {
                                             <div class="flex items-center justify-center">
                                                 <div>
                                                     <div class="text-sm font-medium text-gray-900">
+                                                        {{ item.gross_weight - item.tare_weight }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center justify-center">
+                                                <div>
+                                                    <div class="text-sm font-medium text-gray-900">
                                                         {{ item.strain }}
                                                     </div>
                                                 </div>
@@ -328,7 +347,7 @@ const updateItems = () => {
                                                 </Link>
                                                 <a
                                                     href="#"
-                                                    @click="deleteItem(item)"
+                                                    @click="showDeleteConfirmModal = true; itemToDelete = item"
                                                     class="float-left px-4 py-2 ml-2 text-red-400 duration-100 rounded hover:text-red-600"
                                                 >
                                                     <svg
@@ -429,5 +448,19 @@ const updateItems = () => {
                 </PrimaryButton>
             </template>
         </DialogModal>
+
+        <ConfirmationModal :show="showDeleteConfirmModal" @close="showDeleteConfirmModal = false">
+            <template #title> Confirm </template>
+
+            <template #content>
+                Are you sure you would like to delete this item?
+            </template>
+
+            <template #footer>
+                <SecondaryButton @click="showDeleteConfirmModal = false"> Cancel </SecondaryButton>
+
+                <DangerButton class="ml-3" @click="deleteItem"> Delete </DangerButton>
+            </template>
+        </ConfirmationModal>
     </AuthenticatedLayout>
 </template>

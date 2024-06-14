@@ -23,8 +23,25 @@ defineProps({
     },
 });
 
+function getFirstDateOfCurrentWeek() {
+    const now = new Date();
+    const dayOfWeek = now.getDay(); // 0 (Sunday) - 6 (Saturday)
+    const firstDay = new Date(now);
+    
+    // Adjust to get the previous Monday
+    const diff = (dayOfWeek === 0 ? 6 : dayOfWeek - 1); // shift days to get back to Monday
+    firstDay.setDate(now.getDate() - diff);
+    
+    // Set hours to the start of the day
+    firstDay.setHours(0, 0, 0, 0);
+    
+    return firstDay;
+}
+
+const firstDayOfWeek = getFirstDateOfCurrentWeek();
+
 const form = useForm({
-    from_date_time: new Date(),
+    from_date_time: firstDayOfWeek,
     to_date_time: new Date(),
 });
 
@@ -49,7 +66,7 @@ const submit = () => {
                             <div>
                                 <h2 class="font-semibold text-center text-xl text-gray-700 leading-tight"> Inventory Stats </h2>
                             </div>
-
+                                
                             <form class="flex gap-6" @submit.prevent="submit">
                                 <div>
                                     <InputLabel for="from_date_time" value="From" />
@@ -83,10 +100,11 @@ const submit = () => {
                                     <table class="block overflow-y-auto whitespace-nowrap divide-y divide-gray-200">
                                         <thead class="bg-gray-50">
                                             <tr>
-                                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase"> {{ data.product.product }} </th>
-                                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase"> Grams </th>
-                                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase"> Lbs </th>
-                                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase"> Jars </th>
+                                                <th scope="col" class="px-6 py-3 text-lg font-medium tracking-wider text-center text-gray-900 uppercase"> {{ productId }} </th>
+                                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase"> grams </th>
+                                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase"> kilograms </th>
+                                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase"> pounds </th>
+                                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase"> ounce </th>
                                             </tr>
                                         </thead>
                                         <tbody class="bg-white divide-y divide-gray-200">
@@ -104,7 +122,16 @@ const submit = () => {
                                                     <div class="flex items-center justify-center">
                                                         <div>
                                                             <div class="text-sm font-medium text-gray-900">
-                                                                {{ statusData.totalWeight.grams }}
+                                                                {{ statusData.totalWeight.g }}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    <div class="flex items-center justify-center">
+                                                        <div>
+                                                            <div class="text-sm font-medium text-gray-900">
+                                                                {{ statusData.totalWeight.kg }}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -122,7 +149,7 @@ const submit = () => {
                                                     <div class="flex items-center justify-center">
                                                         <div>
                                                             <div class="text-sm font-medium text-gray-900">
-                                                                {{ statusData.totalWeight.jars }}
+                                                                {{ statusData.totalWeight.oz }}
                                                             </div>
                                                         </div>
                                                     </div>

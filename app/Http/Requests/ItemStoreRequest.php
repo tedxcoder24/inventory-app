@@ -35,6 +35,7 @@ class ItemStoreRequest extends FormRequest
             'clarity_id'=> 'nullable|exists:clarities,id',
             'appearance_id' => 'nullable|exists:appearances,id',
             'note' => 'nullable|string|max:255',
+            'status_id' => 'exists:statuses,id',
         ];
     }
 }

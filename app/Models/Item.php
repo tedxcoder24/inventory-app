@@ -70,4 +70,9 @@ class Item extends Model
     {
         return $this->belongsTo(Appearance::class);
     }
+
+    public function changeHistories()
+    {
+        return $this->hasMany(ItemChange::class);
+    }
 }

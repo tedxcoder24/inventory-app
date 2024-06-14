@@ -28,6 +28,7 @@ use App\Models\Clarity;
 use App\Models\Appearance;
 use App\Models\Status;
 use App\Models\Config;
+use App\Models\ItemChange;
 
 class ItemController extends Controller
 {
@@ -76,15 +77,19 @@ class ItemController extends Controller
         $validated_data = $request->validated();
 
         $config = Config::first();
-        $serial_number = $config->last_serial_number + 1;
-        $config->update(['last_serial_number' => $serial_number]);
+        $last_serial_number = $config->last_serial_number;
+        $new_serial_number = str_pad((int)$last_serial_number + 1, 9, '0', STR_PAD_LEFT);
+
+        // Save the new serial number back to the database
+        $config->last_serial_number = $new_serial_number;
+        $config->save();
         
-        $formattedDate = Carbon::parse($validated_data['date_time'])->format('Y-m-d H:i:s');
+        $formatted_date = Carbon::parse($validated_data['date_time'])->format('Y-m-d H:i:s');
 
         $item_data = [
             'operator_id' => $validated_data['operator_id'],
-            'date_time' => $formattedDate,
-            'serial_number' => $serial_number,
+            'date_time' => $formatted_date,
+            'serial_number' => $new_serial_number,
             'item_type_id' => $validated_data['item_type_id'],
             'batch_id'=> '',
             'metrc_id'=> '',
@@ -104,19 +109,15 @@ class ItemController extends Controller
         if ($validated_data['appearance_id'] !== null) $item_data['appearance_id'] = $validated_data['appearance_id'];
         $item = Item::create($item_data);
 
-        $item->weights()->create([
-            'date_time' => $formattedDate,
+        ItemChange::create([
+            'date_time' => $formatted_date,
             'operator_id'=> $validated_data['operator_id'],
-            'gross_weight' => $validated_data['gross_weight'],
+            'item_id' => $item->id,
+            'status_id' => Status::where('status', 'IN')->first()->id,
+            'gross_weight'=> $validated_data['gross_weight'],
             'note' => $request->note,
         ]);
 
-        $item->statuses()->create([
-            'date_time' => $formattedDate,
-            'operator_id'=> $validated_data['operator_id'],
-            'status_id' => Status::where('status', 'IN')->first()->id,
-            'note' => $request->note,
-        ]);
         // return redirect()->route('items.index')->with('success', 'Item has been created!');
     }
 
@@ -133,8 +134,8 @@ class ItemController extends Controller
             'color', 
             'clarity', 
             'appearance', 
-            'statuses.status', 
-            'statuses.operator'
+            'changeHistories.operator',
+            'changeHistories.status',
         ])->findOrFail($id);
 
         return Inertia::render('Items/Show', [
@@ -147,16 +148,18 @@ class ItemController extends Controller
      */
     public function edit(Item $item)
     {
+        $item_status = ItemChange::where('item_id', $item->id)->latest()->first()->status;
         return Inertia::render('Items/Edit', [
             'item' => $item,
+            'itemStatus' => $item_status,
             'operators' => OperatorResource::collection(Operator::where('enabled', true)->get()),
             'itemTypes' => ItemTypeResource::collection(ItemType::where('enabled', true)->get()),
-            'weightUnits' => WeightUnitResource::collection(WeightUnit::all()),
             'strains' => StrainResource::collection(Strain::where('enabled', true)->get()),
             'products' => ProductResource::collection(Product::where('enabled', true)->get()),
             'colors' => ColorResource::collection(Color::where('enabled', true)->get()),
             'clarities' => ClarityResource::collection(Clarity::where('enabled', true)->get()),
             'appearances' => AppearanceResource::collection(Appearance::where('enabled', true)->get()),
+            'statuses'=> StatusResource::collection(Status::where('enabled', true)->get()),
         ]);
     }
 
@@ -165,9 +168,39 @@ class ItemController extends Controller
      */
     public function update(ItemStoreRequest $request, string $id)
     {
-        $validatedData = $request->validated();
+        $validated_data = $request->validated();
+        $formatted_date = Carbon::parse($validated_data['date_time'])->format('Y-m-d H:i:s');
 
-        Item::findOrFail($id)->update($validatedData);
+        $item_data = [
+            'operator_id' => $validated_data['operator_id'],
+            'date_time' => $formatted_date,
+            'item_type_id' => $validated_data['item_type_id'],
+            'batch_id' => '',
+            'metrc_id' => '',
+            'tare_weight' => $validated_data['tare_weight'],
+            'gross_weight' => $validated_data['gross_weight'],
+            'strain_id' => $validated_data['strain_id'],
+            'product_id' => $validated_data['product_id'],
+            'color_id' => 1,
+            'clarity_id' => 1,
+            'appearance_id' => 1,
+        ];
+
+        if ($validated_data['batch_id'] !== null) $item_data['batch_id'] = $validated_data['batch_id'];
+        if ($validated_data['metrc_id'] !== null) $item_data['metrc_id'] = $validated_data['metrc_id'];
+        if ($validated_data['color_id'] !== null) $item_data['color_id'] = $validated_data['color_id'];
+        if ($validated_data['clarity_id'] !== null) $item_data['clarity_id'] = $validated_data['clarity_id'];
+        if ($validated_data['appearance_id'] !== null) $item_data['appearance_id'] = $validated_data['appearance_id'];
+
+        Item::findOrFail($id)->update($item_data);
+
+        ItemChange::create([
+            'date_time' => $formatted_date,
+            'operator_id' => $validated_data['operator_id'],
+            'item_id' => $id,
+            'status_id' => $validated_data['status_id'],
+            'gross_weight' => $validated_data['gross_weight'],
+        ]);
 
         return redirect('/items')->with('success', 'Item has been updated!');
     }

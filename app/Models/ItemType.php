@@ -18,6 +18,6 @@ class ItemType extends Model
 
     public function weightUnit()
     {
-        $this->belongsTo(WeightUnit::class);
+        return $this->belongsTo(WeightUnit::class);
     }
 }

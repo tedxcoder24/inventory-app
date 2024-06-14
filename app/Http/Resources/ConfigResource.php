@@ -21,6 +21,10 @@ class ConfigResource extends JsonResource
             'label_printer' => $this->label_printer,
             'report_printer' => $this->report_printer,
             'image_directory'=> $this->image_directory,
+            'baud_rate' => $this->baud_rate,
+            'data_bits' => $this->data_bits,
+            'stop_bits' => $this->stop_bits,
+            'parity' => $this->parity,
         ];
     }
 }
