@@ -13,11 +13,15 @@ return new class extends Migration
     {
         Schema::create('config', function (Blueprint $table) {
             $table->id();
-            $table->double('last_serial_number')->unsigned()->default(0);
+            $table->string('last_serial_number', 100)->default('000000000');
             $table->string('serial_port', 100);
             $table->string('label_printer', 100);
             $table->string('report_printer', 100);
             $table->string('image_directory', 250);
+            $table->integer('baud_rate')->unsigned();
+            $table->integer('data_bits')->unsigned()->default(7);
+            $table->integer('stop_bits')->unsigned()->default(1);
+            $table->string('parity', 250)->default('none');
             $table->timestamps();
             $table->softDeletes();
         });

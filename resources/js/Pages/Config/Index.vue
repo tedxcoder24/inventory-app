@@ -19,7 +19,7 @@ defineProps({
         </template>
 
         <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 flex justify-center items-center">
                         <table class="block overflow-y-auto whitespace-nowrap divide-y divide-gray-200">
@@ -42,6 +42,18 @@ defineProps({
                                     </th>
                                     <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
                                         Image Directory
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
+                                        Baud Rate
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
+                                        Data Bits
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
+                                        Stop Bits
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
+                                        Parity
                                     </th>
                                 </tr>
                             </thead>
@@ -102,6 +114,46 @@ defineProps({
                                             <div>
                                                 <div class="text-sm font-medium text-gray-900">
                                                     {{ config.image_directory }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center justify-center">
+                                            <div>
+                                                <div class="text-sm font-medium text-gray-900">
+                                                    {{ config.baud_rate }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center justify-center">
+                                            <div>
+                                                <div class="text-sm font-medium text-gray-900">
+                                                    {{ config.data_bits }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center justify-center">
+                                            <div>
+                                                <div class="text-sm font-medium text-gray-900">
+                                                    {{ config.stop_bits }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center justify-center">
+                                            <div>
+                                                <div class="text-sm font-medium text-gray-900">
+                                                    {{ config.parity }}
                                                 </div>
                                             </div>
                                         </div>

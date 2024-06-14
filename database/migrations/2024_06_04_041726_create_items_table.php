@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('operator_id')->constrained();
             $table->timestamp('date_time');
-            $table->integer('serial_number')->unsigned();
+            $table->string('serial_number', 100);
             $table->foreignId('item_type_id')->constrained();
             $table->string('batch_id', 25);
             $table->string('metrc_id', 25);

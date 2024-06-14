@@ -77,15 +77,19 @@ class ItemController extends Controller
         $validated_data = $request->validated();
 
         $config = Config::first();
-        $serial_number = $config->last_serial_number + 1;
-        $config->update(['last_serial_number' => $serial_number]);
+        $last_serial_number = $config->last_serial_number;
+        $new_serial_number = str_pad((int)$last_serial_number + 1, 9, '0', STR_PAD_LEFT);
+
+        // Save the new serial number back to the database
+        $config->last_serial_number = $new_serial_number;
+        $config->save();
         
         $formatted_date = Carbon::parse($validated_data['date_time'])->format('Y-m-d H:i:s');
 
         $item_data = [
             'operator_id' => $validated_data['operator_id'],
             'date_time' => $formatted_date,
-            'serial_number' => $serial_number,
+            'serial_number' => $new_serial_number,
             'item_type_id' => $validated_data['item_type_id'],
             'batch_id'=> '',
             'metrc_id'=> '',

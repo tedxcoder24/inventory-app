@@ -14,11 +14,15 @@ class ConfigTableSeeder extends Seeder
     public function run(): void
     {
         DB::table('config')->insert([
-            'last_serial_number' => 0,
+            'last_serial_number' => '000000000',
             'serial_port' => 'COM1',
             'label_printer' => 'PRINTER1',
             'report_printer' => 'PRINTER2',
             'image_directory' => '/images',
+            'baud_rate' => 9600,
+            'data_bits' => 7,
+            'stop_bits' => 1,
+            'parity' => 'none',
         ]);
     }
 }

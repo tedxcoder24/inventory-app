@@ -17,6 +17,10 @@ class Config extends Model
         'serial_port',
         'label_printer',
         'report_printer',
-        'image_directory'
+        'image_directory',
+        'baud_rate',
+        'data_bits',
+        'stop_bits',
+        'parity',
     ];
 }
