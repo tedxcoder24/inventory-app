@@ -4,49 +4,97 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import DateTimePicker from '@/Components/DateTimePicker.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
+import SecondaryButton from '@/Components/SecondaryButton.vue';
 
-defineProps({
-    items: {
-        type: Object,
-        required: true,
-    },
-    products: {
-        type: Array,
-        required: true,
-    },
-    currentItems: {
-        type: Array,
-        required: true,
-    },
-    inventories: {
-        type: Array,
-    },
+const props = defineProps({
+    data: { type: Array },
+    from_date: { type: Date },
+    to_date: { type: Date }
 });
 
-function getFirstDateOfCurrentWeek() {
+function getCurrentWeekDates() {
     const now = new Date();
     const dayOfWeek = now.getDay(); // 0 (Sunday) - 6 (Saturday)
     const firstDay = new Date(now);
-    
+    const lastDay = new Date(now);
+
     // Adjust to get the previous Monday
-    const diff = (dayOfWeek === 0 ? 6 : dayOfWeek - 1); // shift days to get back to Monday
-    firstDay.setDate(now.getDate() - diff);
-    
-    // Set hours to the start of the day
+    const diffToFirstDay = (dayOfWeek === 0 ? 6 : dayOfWeek - 1); // shift days to get back to Monday
+    firstDay.setDate(now.getDate() - diffToFirstDay);
     firstDay.setHours(0, 0, 0, 0);
-    
-    return firstDay;
+
+    // Adjust to get the coming Sunday
+    const diffToLastDay = (dayOfWeek === 0 ? 0 : 7 - dayOfWeek);
+    lastDay.setDate(now.getDate() + diffToLastDay);
+    lastDay.setHours(23, 59, 59, 999);
+
+    return { start: firstDay, end: lastDay };
 }
 
-const firstDayOfWeek = getFirstDateOfCurrentWeek();
+const getPreviousWeekDates = () => {
+    const now = new Date();
+    const dayOfWeek = now.getDay(); // 0 (Sunday) - 6 (Saturday)
+    const firstDayOfCurrentWeek = new Date(now);
+    const diff = (dayOfWeek === 0 ? 6 : dayOfWeek - 1);
+    firstDayOfCurrentWeek.setDate(now.getDate() - diff);
+
+    const firstDayOfPreviousWeek = new Date(firstDayOfCurrentWeek);
+    firstDayOfPreviousWeek.setDate(firstDayOfCurrentWeek.getDate() - 7);
+    
+    const lastDayOfPreviousWeek = new Date(firstDayOfPreviousWeek);
+    lastDayOfPreviousWeek.setDate(firstDayOfPreviousWeek.getDate() + 6);
+
+    // Set hours to the start of the day
+    firstDayOfPreviousWeek.setHours(0, 0, 0, 0);
+    lastDayOfPreviousWeek.setHours(23, 59, 59, 999);
+    
+    return { start: firstDayOfPreviousWeek, end: lastDayOfPreviousWeek };
+}
+
+const getPreviousMonthDates = () => {
+    const now = new Date();
+    const firstDayOfCurrentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    const firstDayOfPreviousMonth = new Date(firstDayOfCurrentMonth);
+    firstDayOfPreviousMonth.setMonth(firstDayOfCurrentMonth.getMonth() - 1);
+    
+    const lastDayOfPreviousMonth = new Date(firstDayOfPreviousMonth.getFullYear(), firstDayOfPreviousMonth.getMonth() + 1, 0);
+
+    // Set hours to the start of the day
+    firstDayOfPreviousMonth.setHours(0, 0, 0, 0);
+    lastDayOfPreviousMonth.setHours(23, 59, 59, 999);
+    
+    return { start: firstDayOfPreviousMonth, end: lastDayOfPreviousMonth };
+}
 
 const form = useForm({
-    from_date_time: firstDayOfWeek,
-    to_date_time: new Date(),
+    from_date_time: props.from_date,
+    to_date_time: props.to_date,
 });
 
 const submit = () => {
     form.get(route('dashboard'));
+}
+
+const viewPreviousWeek = () => {
+    const previousWeek = getPreviousWeekDates();
+    form.from_date_time = previousWeek.start;
+    form.to_date_time = previousWeek.end;
+    submit();
+}
+
+const viewPreviousMonth = () => {
+    const previousMonth = getPreviousMonthDates();
+    form.from_date_time = previousMonth.start;
+    form.to_date_time = previousMonth.end;
+    submit();
+}
+
+const viewCurrentWeek = () => {
+    const currentWeek = getCurrentWeekDates();
+    form.from_date_time = currentWeek.start;
+    form.to_date_time = currentWeek.end;
+    submit();
 }
 </script>
 
@@ -66,54 +114,64 @@ const submit = () => {
                             <div>
                                 <h2 class="font-semibold text-center text-xl text-gray-700 leading-tight"> Inventory Stats </h2>
                             </div>
-                                
-                            <form class="flex gap-6" @submit.prevent="submit">
-                                <div>
-                                    <InputLabel for="from_date_time" value="From" />
 
-                                    <DateTimePicker
-                                        id="from_date_time"
-                                        class="mt-1 block"
-                                        required
-                                        v-model="form.from_date_time"
-                                    />
+                            <div class="flex justify-between">
+                                <form class="flex gap-6" @submit.prevent="submit">
+                                    <div>
+                                        <InputLabel for="from_date_time" value="From" />
+    
+                                        <DateTimePicker
+                                            id="from_date_time"
+                                            class="mt-1 block"
+                                            required
+                                            v-model="form.from_date_time"
+                                        />
+                                    </div>
+    
+                                    <div>
+                                        <InputLabel for="to_date_time" value="To" />
+    
+                                        <DateTimePicker
+                                            id="to_date_time"
+                                            class="mt-1 block"
+                                            required
+                                            v-model="form.to_date_time"
+                                        />
+                                    </div>
+    
+                                    <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                                        View
+                                    </PrimaryButton>
+                                </form>
+
+                                <div class="flex gap-6">
+                                    <SecondaryButton @click="viewCurrentWeek">Current Week</SecondaryButton>
+                                    <SecondaryButton @click="viewPreviousWeek">Previous Week</SecondaryButton>
+                                    <SecondaryButton @click="viewPreviousMonth">Previous Month</SecondaryButton>
                                 </div>
+                            </div>
 
-                                <div>
-                                    <InputLabel for="to_date_time" value="To" />
-
-                                    <DateTimePicker
-                                        id="to_date_time"
-                                        class="mt-1 block"
-                                        required
-                                        v-model="form.to_date_time"
-                                    />
-                                </div>
-
-                                <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                                    View
-                                </PrimaryButton>
-                            </form>
-
-                            <div class="flex justify-around gap-6">
-                                <div v-for="(data, productId) in inventories" :key="productId">
+                            <div class="flex flex-wrap justify-around gap-6">
+                                <div v-for="(item, id) in data" :key="id">
                                     <table class="block overflow-y-auto whitespace-nowrap divide-y divide-gray-200">
                                         <thead class="bg-gray-50">
                                             <tr>
-                                                <th scope="col" class="px-6 py-3 text-lg font-medium tracking-wider text-center text-gray-900 uppercase"> {{ productId }} </th>
+                                                <th scope="col" class="px-6 py-3 text-lg font-medium tracking-wider text-center text-gray-900 uppercase"> {{ item.product }} </th>
                                                 <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase"> grams </th>
-                                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase"> kilograms </th>
-                                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase"> pounds </th>
-                                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase"> ounce </th>
+                                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase"> lbs </th>
+                                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase"> jar </th>
+                                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase"> pack </th>
+                                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase"> case </th>
+                                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase"> bag </th>
                                             </tr>
                                         </thead>
                                         <tbody class="bg-white divide-y divide-gray-200">
-                                            <tr v-for="(statusData, statusId) in data.statuses" :key="statusId">
+                                            <tr v-for="(status, statusId) in item.statuses" :key="statusId">
                                                 <td class="px-6 py-4 whitespace-nowrap">
                                                     <div class="flex items-center justify-center">
                                                         <div>
                                                             <div class="text-sm font-medium text-gray-900">
-                                                                {{ statusData.status.status }}
+                                                                {{ statusId }}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -122,7 +180,7 @@ const submit = () => {
                                                     <div class="flex items-center justify-center">
                                                         <div>
                                                             <div class="text-sm font-medium text-gray-900">
-                                                                {{ statusData.totalWeight.g }}
+                                                                {{ status.weight }}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -131,7 +189,7 @@ const submit = () => {
                                                     <div class="flex items-center justify-center">
                                                         <div>
                                                             <div class="text-sm font-medium text-gray-900">
-                                                                {{ statusData.totalWeight.kg }}
+                                                                {{ (status.weight * 0.00220642).toFixed(2) }}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -140,7 +198,7 @@ const submit = () => {
                                                     <div class="flex items-center justify-center">
                                                         <div>
                                                             <div class="text-sm font-medium text-gray-900">
-                                                                {{ statusData.totalWeight.lbs }}
+                                                                {{ status.jarCount }}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -149,7 +207,25 @@ const submit = () => {
                                                     <div class="flex items-center justify-center">
                                                         <div>
                                                             <div class="text-sm font-medium text-gray-900">
-                                                                {{ statusData.totalWeight.oz }}
+                                                                {{ status.packCount }}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    <div class="flex items-center justify-center">
+                                                        <div>
+                                                            <div class="text-sm font-medium text-gray-900">
+                                                                {{ status.caseCount }}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    <div class="flex items-center justify-center">
+                                                        <div>
+                                                            <div class="text-sm font-medium text-gray-900">
+                                                                {{ status.bagCount }}
                                                             </div>
                                                         </div>
                                                     </div>

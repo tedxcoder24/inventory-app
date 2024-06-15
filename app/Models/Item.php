@@ -28,12 +28,12 @@ class Item extends Model
 
     public function weights()
     {
-        return $this->morphMany(ChangeItemWeight::class, 'changeable');
+        return $this->hasMany(ItemWeight::class);
     }
 
     public function statuses()
     {
-        return $this->morphMany(ChangeItemStatus::class, 'changeable');
+        return $this->hasMany(ItemStatus::class);
     }
 
     public function operator()

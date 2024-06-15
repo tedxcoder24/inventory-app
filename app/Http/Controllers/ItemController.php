@@ -29,6 +29,8 @@ use App\Models\Appearance;
 use App\Models\Status;
 use App\Models\Config;
 use App\Models\ItemChange;
+use App\Models\ItemStatus;
+use App\Models\ItemWeight;
 
 class ItemController extends Controller
 {
@@ -109,11 +111,18 @@ class ItemController extends Controller
         if ($validated_data['appearance_id'] !== null) $item_data['appearance_id'] = $validated_data['appearance_id'];
         $item = Item::create($item_data);
 
-        ItemChange::create([
+        ItemStatus::create([
             'date_time' => $formatted_date,
-            'operator_id'=> $validated_data['operator_id'],
+            'operator_id' => $validated_data['operator_id'],
             'item_id' => $item->id,
             'status_id' => Status::where('status', 'IN')->first()->id,
+            'note' => $request->note,
+        ]);
+
+        ItemWeight::create([
+            'date_time' => $formatted_date,
+            'operator_id' => $validated_data['operator_id'],
+            'item_id' => $item->id,
             'gross_weight'=> $validated_data['gross_weight'],
             'note' => $request->note,
         ]);
@@ -134,12 +143,16 @@ class ItemController extends Controller
             'color', 
             'clarity', 
             'appearance', 
-            'changeHistories.operator',
-            'changeHistories.status',
+            'weights.operator',
+            'statuses.operator',
+            'statuses.status',
         ])->findOrFail($id);
+
+        $current_weight = $item->weights()->orderBy('date_time')->get();
 
         return Inertia::render('Items/Show', [
             'item' => $item,
+            'currentWeight' => $current_weight,
         ]);
     }
 
@@ -148,10 +161,14 @@ class ItemController extends Controller
      */
     public function edit(Item $item)
     {
-        $item_status = ItemChange::where('item_id', $item->id)->latest()->first()->status;
+        $current_status = ItemStatus::where('item_id', $item->id)->latest()->first()->status;
+        $current_weight = ItemWeight::where('item_id', $item->id)->latest()->first();
+
         return Inertia::render('Items/Edit', [
             'item' => $item,
-            'itemStatus' => $item_status,
+            'currentStatus' => $current_status,
+            'currentWeight' => $current_weight,
+            'statuses'=> StatusResource::collection(Status::where('enabled', true)->get()),
             'operators' => OperatorResource::collection(Operator::where('enabled', true)->get()),
             'itemTypes' => ItemTypeResource::collection(ItemType::where('enabled', true)->get()),
             'strains' => StrainResource::collection(Strain::where('enabled', true)->get()),
@@ -159,7 +176,6 @@ class ItemController extends Controller
             'colors' => ColorResource::collection(Color::where('enabled', true)->get()),
             'clarities' => ClarityResource::collection(Clarity::where('enabled', true)->get()),
             'appearances' => AppearanceResource::collection(Appearance::where('enabled', true)->get()),
-            'statuses'=> StatusResource::collection(Status::where('enabled', true)->get()),
         ]);
     }
 
@@ -194,12 +210,20 @@ class ItemController extends Controller
 
         Item::findOrFail($id)->update($item_data);
 
-        ItemChange::create([
+        ItemStatus::create([
             'date_time' => $formatted_date,
             'operator_id' => $validated_data['operator_id'],
             'item_id' => $id,
             'status_id' => $validated_data['status_id'],
-            'gross_weight' => $validated_data['gross_weight'],
+            'note' => $request->note,
+        ]);
+
+        ItemWeight::create([
+            'date_time' => $formatted_date,
+            'operator_id' => $validated_data['operator_id'],
+            'item_id' => $id,
+            'gross_weight'=> $validated_data['gross_weight'],
+            'note' => $request->note,
         ]);
 
         return redirect('/items')->with('success', 'Item has been updated!');
@@ -228,16 +252,17 @@ class ItemController extends Controller
 
         foreach ($request->ids as $id) {
             $item = Item::findOrFail($id);
-            $formattedDate = Carbon::parse($request->date_time)->format('Y-m-d H:i:s');
+            $formatted_date = Carbon::parse($request->date_time)->format('Y-m-d H:i:s');
 
             $item->update([
                 'operator_id' => $request->operator_id,
-                'date_time' => $formattedDate,
+                'date_time' => $formatted_date,
             ]);
 
-            $item->statuses()->create([
-                'date_time' => $formattedDate,
-                'operator_id'=> $request->operator_id,
+            ItemStatus::create([
+                'date_time' => $formatted_date,
+                'operator_id' => $request->operator_id,
+                'item_id' => $item->id,
                 'status_id' => $request->status_id,
                 'note' => $request->note,
             ]);
