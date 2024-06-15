@@ -7,6 +7,10 @@ defineProps({
         type: Object,
         required: true,
     },
+    currentWeight: {
+        type: Object,
+        required: true,
+    },
 });
 </script>
 
@@ -35,7 +39,7 @@ defineProps({
                     <div class="p-6">
                         <p class="text-gray-900 mb-6"> Item Details - History of Item change </p>
 
-                        <div class="flex justify-between gap-8">
+                        <div class="flex flex-col gap-8">
                             <div class="w-full">
                                 <div class="flex flex-col justify-between items-center gap-6">
                                     <div class="flex justify-around gap-6">
@@ -47,8 +51,6 @@ defineProps({
                                             <label class="text-base font-medium text-gray-500"> Date and Time: </label>
                                             {{ item.date_time }} 
                                         </div>
-                                    </div>
-                                    <div class="flex justify-around gap-6">
                                         <div class="text-lg font-medium text-gray-900"> 
                                             <label class="text-base font-medium text-gray-500"> Operator: </label>
                                             {{ item.operator.operator }} 
@@ -78,7 +80,7 @@ defineProps({
                                             {{ item.product.product }} 
                                         </div>
                                     </div>
-                                    <div class="flex justify-around gap-6">
+                                    <div class="flex flex-col gap-6">
                                         <div class="text-lg font-medium text-gray-900"> 
                                             <label class="text-base font-medium text-gray-500"> Tare Weight: </label>
                                             {{ item.tare_weight }} 
@@ -89,7 +91,7 @@ defineProps({
                                         </div>
                                         <div class="text-lg font-medium text-gray-900"> 
                                             <label class="text-base font-medium text-gray-500"> Current Net Weight: </label>
-                                            {{ item.change_histories[item.change_histories.length - 1].gross_weight - item.tare_weight }} 
+                                            {{ item.gross_weight - item.tare_weight }} 
                                         </div>
                                     </div>
                                     <div class="flex justify-around gap-6">
@@ -110,7 +112,7 @@ defineProps({
                             </div>
 
                             <div class="w-full">
-                                <div class="flex flex-col gap-6">
+                                <div class="flex justify-around gap-6">
                                     <table class="block overflow-y-auto whitespace-nowrap divide-y divide-gray-200">
                                         <thead class="bg-gray-50">
                                             <tr>
@@ -124,6 +126,62 @@ defineProps({
                                                     Status
                                                 </th>
                                                 <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
+                                                    Note
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="bg-white divide-y divide-gray-200">
+                                            <tr v-for="(status, id) in item.statuses" :key="id">
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    <div class="flex items-center justify-center">
+                                                        <div>
+                                                            <div class="text-sm font-medium text-gray-900">
+                                                                {{ status.operator.operator }}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    <div class="flex items-center justify-center">
+                                                        <div>
+                                                            <div class="text-sm font-medium text-gray-900">
+                                                                {{ status.date_time }}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    <div class="flex items-center justify-center">
+                                                        <div>
+                                                            <div class="text-sm font-medium text-gray-900">
+                                                                {{ status.status.status }}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    <div class="flex items-center justify-center">
+                                                        <div>
+                                                            <div class="text-sm font-medium text-gray-900">
+                                                                {{ status.note }}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+                                    <table class="block overflow-y-auto whitespace-nowrap divide-y divide-gray-200">
+                                        <thead class="bg-gray-50">
+                                            <tr>
+                                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
+                                                    Operator
+                                                </th>
+                                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
+                                                    Date Time
+                                                </th>
+                                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
                                                     Gross Weight
                                                 </th>
                                                 <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
@@ -132,12 +190,12 @@ defineProps({
                                             </tr>
                                         </thead>
                                         <tbody class="bg-white divide-y divide-gray-200">
-                                            <tr v-for="(history, id) in item.change_histories" :key="id">
+                                            <tr v-for="(weight, id) in item.weights" :key="id">
                                                 <td class="px-6 py-4 whitespace-nowrap">
                                                     <div class="flex items-center justify-center">
                                                         <div>
                                                             <div class="text-sm font-medium text-gray-900">
-                                                                {{ history.operator.operator }}
+                                                                {{ weight.operator.operator }}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -146,7 +204,7 @@ defineProps({
                                                     <div class="flex items-center justify-center">
                                                         <div>
                                                             <div class="text-sm font-medium text-gray-900">
-                                                                {{ history.date_time }}
+                                                                {{ weight.date_time }}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -155,7 +213,7 @@ defineProps({
                                                     <div class="flex items-center justify-center">
                                                         <div>
                                                             <div class="text-sm font-medium text-gray-900">
-                                                                {{ history.status.status }}
+                                                                {{ weight.gross_weight }}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -164,16 +222,7 @@ defineProps({
                                                     <div class="flex items-center justify-center">
                                                         <div>
                                                             <div class="text-sm font-medium text-gray-900">
-                                                                {{ history.gross_weight }}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap">
-                                                    <div class="flex items-center justify-center">
-                                                        <div>
-                                                            <div class="text-sm font-medium text-gray-900">
-                                                                {{ history.note }}
+                                                                {{ weight.note }}
                                                             </div>
                                                         </div>
                                                     </div>

@@ -11,43 +11,17 @@ import DateTimePicker from '@/Components/DateTimePicker.vue';
 import ConfirmationModal from '@/Components/ConfirmationModal.vue';
 
 const props = defineProps({
-    item: {
-        type: Object,
-    },
-    statuses: {
-        type: Object,
-    },
-    operators: {
-        type: Object,
-    },
-    itemTypes: {
-        type: Object,
-        required: true,
-    },
-    strains: {
-        type: Object,
-        required: true,
-    },
-    products: {
-        type: Object,
-        required: true,
-    },
-    colors: {
-        type: Object,
-        required: true,
-    },
-    clarities: {
-        type: Object,
-        required: true,
-    },
-    appearances: {
-        type: Object,
-        required: true,
-    },
-    itemStatus: {
-        type: Object,
-        required: true,
-    },
+    item: { type: Object },
+    currentStatus: { type: Object },
+    currentWeight: { type: Object },
+    statuses: { type: Object },
+    operators: { type: Object },
+    itemTypes: { type: Object },
+    strains: { type: Object },
+    products: { type: Object },
+    colors: { type: Object },
+    clarities: { type: Object },
+    appearances: { type: Object },
 });
 
 const form = useForm({
@@ -57,13 +31,13 @@ const form = useForm({
     batch_id: props.item.batch_id,
     metrc_id: props.item.metrc_id,
     tare_weight: props.item.tare_weight,
-    gross_weight: props.item.gross_weight,
+    gross_weight: props.currentWeight.gross_weight,
     strain_id: props.item.strain_id,
     product_id: props.item.product_id,
     color_id: props.item.color_id,
     clarity_id: props.item.clarity_id,
     appearance_id: props.item.appearance_id,
-    status_id: props.itemStatus.id,
+    status_id: props.currentStatus.id,
 });
 
 const showModal = ref(false);
