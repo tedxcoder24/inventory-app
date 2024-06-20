@@ -40,6 +40,7 @@ Route::middleware('auth')->group(function () {
     
     Route::resource('/items', ItemController::class);
     Route::post('items/change-status', [ItemController::class, 'batchChangeStatus'])->name('item.batch-change-status');
+    Route::post('items/change-weight', [ItemController::class, 'batchChangeWeight'])->name('item.batch-change-weight');
 
     Route::resource('/attributes', AttributeController::class)->middleware('role:admin');
     Route::post('/attributes/delete', [AttributeController::class,'delete'])->name('attributes.delete');

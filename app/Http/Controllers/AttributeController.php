@@ -23,6 +23,7 @@ use App\Models\Product;
 use App\Models\Color;
 use App\Models\Clarity;
 use App\Models\Appearance;
+use App\Models\Item;
 use App\Models\Status;
 
 class AttributeController extends Controller
@@ -96,13 +97,14 @@ class AttributeController extends Controller
     {
         $attr_types = ['Operator', 'Item type', 'Strain', 'Product', 'Color', 'Clarity', 'Appearance', 'Status'];
         $selected_type = $attr_types[$request->type];
+        $selected_weight_unit = $request->weight_unit;
 
         switch ($selected_type) {
             case 'Operator':
                 Operator::create(['operator' => $request->value]);
                 break;
-            case 'Item Type':
-                ItemType::create(['item_type' => $request->value]);
+            case 'Item type':
+                ItemType::create(['item_type' => $request->value, 'weight_unit_id' => $selected_weight_unit]);
                 break;
             case 'Strain':
                 Strain::create(['strain' => $request->value]);
@@ -205,6 +207,46 @@ class AttributeController extends Controller
         $attribute = $request->input('attribute');
         $id = $attribute['value'];
         $table = $request->input('table');
+
+        $is_referenced = false;
+        switch ($table) {
+            case 'Operator':
+                $is_referenced = Item::where('operator_id', $id)->exists();
+                // Operator::findOrFail($id)->delete();
+                break;
+            case 'Item Type':
+                $is_referenced = Item::where('item_type_id', $id)->exists();
+                // ItemType::findOrFail($id)->delete();
+                break;
+            case 'Strain':
+                $is_referenced = Item::where('strain_id', $id)->exists();
+                // Strain::findOrFail($id)->delete();
+                break;
+            case 'Product':
+                $is_referenced = Item::where('product_id', $id)->exists();
+                // Product::findOrFail($id)->delete();
+                break;
+            case 'Color':
+                $is_referenced = Item::where('color_id', $id)->exists();
+                // Color::findOrFail($id)->delete();
+                break;
+            case 'Clarity':
+                $is_referenced = Item::where('clarity_id', $id)->exists();
+                // Clarity::findOrFail($id)->delete();
+                break;
+            case 'Appearance':
+                $is_referenced = Item::where('appearance_id', $id)->exists();
+                // Appearance::findOrFail($id)->delete();
+                break;
+            case 'Status':
+                $is_referenced = Item::where('status_id', $id)->exists();
+                // Status::findOrFail($id)->delete();
+                break;
+        }
+
+        if ($is_referenced) {
+            return back()->with('error','Item can not be deleted because it is referenced in another record.');
+        }
 
         switch ($table) {
             case 'Operator':
