@@ -138,7 +138,7 @@ const handleSearchedItems = (items) => {
                         Add Item
                     </Link>
                     <button class="px-4 py-2 mr-3 text-sm text-green-600 transition border border-green-300 rounded-full hover:bg-green-600 hover:text-white hover:border-transparent hover:cursor-pointer" :disabled="searchedItems.length === 0" :class="{ 'hover:cursor-not-allowed': searchedItems.length === 0 }" @click="batchStatusEdit">Batch Status Change</button>
-                    <button class="px-4 py-2 mr-3 text-sm text-green-600 transition border border-green-300 rounded-full hover:bg-green-600 hover:text-white hover:border-transparent hover:cursor-pointer" :disabled="searchedItems.length === 0" :class="{ 'hover:cursor-not-allowed': searchedItems.length === 0 }" @click="batchWeightEdit">Batch Weight Change</button>
+                    <!-- <button class="px-4 py-2 mr-3 text-sm text-green-600 transition border border-green-300 rounded-full hover:bg-green-600 hover:text-white hover:border-transparent hover:cursor-pointer" :disabled="searchedItems.length === 0" :class="{ 'hover:cursor-not-allowed': searchedItems.length === 0 }" @click="batchWeightEdit">Batch Weight Change</button> -->
                 </div>
             </div>
         </template>
