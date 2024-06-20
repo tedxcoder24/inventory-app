@@ -1,16 +1,17 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import AttributeTable from '@/Components/AttributeTable.vue';
 import DialogModal from '@/Components/DialogModal.vue';
+import ErrorModal from '@/Components/ErrorModal.vue';
 import Select from '@/Components/Select.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 
-defineProps({
+const props = defineProps({
     operators: {
         type: Object,
         required: true,
@@ -47,9 +48,28 @@ defineProps({
         type: Array,
         required: true,
     },
+    flash: {
+        type: Object,
+        default: () => ({}),
+    },
 });
 
 const showModal = ref(false);
+const showErrorModal = ref(false);
+const flashMessage = ref(null);
+
+const updateFlashMessage = () => {
+    if (props.flash.success) {
+        flashMessage.value = props.flash.success;
+    } else if (props.flash.error) {
+        flashMessage.value = props.flash.error;
+        showErrorModal.value = true;
+    } else {
+        flashMessage.value = null;
+    }
+}
+
+watch(() => props.flash, updateFlashMessage, { immediate: true });
 
 const form = useForm({
     value: '',
@@ -189,5 +209,17 @@ const createAttribute = () => {
                 </PrimaryButton>
             </template>
         </DialogModal>
+
+        <ErrorModal :show="showErrorModal" @close="showErrorModal = false">
+            <template #title> Error </template>
+
+            <template #content>
+                <div>{{ flashMessage }}</div>
+            </template>
+
+            <template #footer>
+                <SecondaryButton @click="showErrorModal = false"> OK </SecondaryButton>
+            </template>
+        </ErrorModal>
     </AuthenticatedLayout>
 </template>

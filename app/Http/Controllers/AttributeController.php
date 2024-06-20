@@ -23,6 +23,7 @@ use App\Models\Product;
 use App\Models\Color;
 use App\Models\Clarity;
 use App\Models\Appearance;
+use App\Models\Item;
 use App\Models\Status;
 
 class AttributeController extends Controller
@@ -205,6 +206,46 @@ class AttributeController extends Controller
         $attribute = $request->input('attribute');
         $id = $attribute['value'];
         $table = $request->input('table');
+
+        $is_referenced = false;
+        switch ($table) {
+            case 'Operator':
+                $is_referenced = Item::where('operator_id', $id)->exists();
+                // Operator::findOrFail($id)->delete();
+                break;
+            case 'Item Type':
+                $is_referenced = Item::where('item_type_id', $id)->exists();
+                // ItemType::findOrFail($id)->delete();
+                break;
+            case 'Strain':
+                $is_referenced = Item::where('strain_id', $id)->exists();
+                // Strain::findOrFail($id)->delete();
+                break;
+            case 'Product':
+                $is_referenced = Item::where('product_id', $id)->exists();
+                // Product::findOrFail($id)->delete();
+                break;
+            case 'Color':
+                $is_referenced = Item::where('color_id', $id)->exists();
+                // Color::findOrFail($id)->delete();
+                break;
+            case 'Clarity':
+                $is_referenced = Item::where('clarity_id', $id)->exists();
+                // Clarity::findOrFail($id)->delete();
+                break;
+            case 'Appearance':
+                $is_referenced = Item::where('appearance_id', $id)->exists();
+                // Appearance::findOrFail($id)->delete();
+                break;
+            case 'Status':
+                $is_referenced = Item::where('status_id', $id)->exists();
+                // Status::findOrFail($id)->delete();
+                break;
+        }
+
+        if ($is_referenced) {
+            return back()->with('error','Item can not be deleted because it is referenced in another record.');
+        }
 
         switch ($table) {
             case 'Operator':
