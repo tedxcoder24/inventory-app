@@ -66,7 +66,6 @@ const createItem = () => {
             form.date_time = new Date();
             form.batch_id = '';
             form.metrc_id = '';
-            form.tare_weight = 0;
             form.gross_weight = 0;
             form.color_id = '';
             form.clarity_id = '';
