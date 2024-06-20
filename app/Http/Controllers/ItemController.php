@@ -270,4 +270,37 @@ class ItemController extends Controller
 
         return redirect('/items')->with('success', 'Item has been updated!');
     }
+
+    public function batchChangeWeight(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'exists:items,id',
+            'operator_id' => 'required|exists:operators,id',
+            'gross_weight' => 'required|numeric|min:0',
+            'date_time' => 'required|date',
+            'note' => 'nullable|string|max:255',
+        ]);
+
+        foreach ($request->ids as $id) {
+            $item = Item::findOrFail($id);
+            $formatted_date = Carbon::parse($request->date_time)->format('Y-m-d H:i:s');
+
+            $item->update([
+                'operator_id' => $request->operator_id,
+                'date_time' => $formatted_date,
+                'gross_weight' => $request->gross_weight,
+            ]);
+
+            ItemWeight::create([
+                'date_time' => $formatted_date,
+                'operator_id' => $request->operator_id,
+                'item_id' => $item->id,
+                'gross_weight' => $request->gross_weight,
+                'note' => $request->note,
+            ]);
+        }
+
+        return redirect('/items')->with('success', 'Item has been updated!');
+    }
 }

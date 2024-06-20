@@ -29,13 +29,22 @@ const props = defineProps({
 const page = usePage();
 const role = computed(() => page.props.auth.user.role);
 
-const showModal = ref(false);
+const showStatusModal = ref(false);
+const showWeightModal = ref(false);
 const selectedItems = ref([]);
 const updateItemStatusForm = useForm({
     ids: [],
     date_time: new Date(),
     operator_id: 0,
     status_id: 0,
+    note: '',
+});
+
+const updateItemWeightForm = useForm({
+    ids: [],
+    date_time: new Date(),
+    operator_id: 0,
+    gross_weight: 0,
     note: '',
 });
 
@@ -78,17 +87,35 @@ const deleteItem = () => {
     });
 }
 
-const batchEdit = () => {
-    showModal.value = true;
+const batchStatusEdit = () => {
+    showStatusModal.value = true;
 }
 
-const updateItems = () => {
-    updateItemStatusForm.ids = selectedItems.value;
+const batchWeightEdit = () => {
+    showWeightModal.value = true;
+}
+
+const updateItemsStatus = () => {
+    updateItemStatusForm.ids = searchedItems.value.map(item => item.id);
     updateItemStatusForm.post(route("item.batch-change-status"), {
         onFinish: () => {
-            showModal.value = false;
+            showStatusModal.value = false;
         }
     });
+}
+
+const updateItemsWeight = () => {
+    updateItemWeightForm.ids = searchedItems.value.map(item => item.id);
+    updateItemWeightForm.post(route("item.batch-change-weight"), {
+        onFinish: () => {
+            showWeightModal.value = false;
+        }
+    });
+}
+
+const searchedItems = ref([]);
+const handleSearchedItems = (items) => {
+    searchedItems.value = items;
 }
 </script>
 
@@ -97,18 +124,23 @@ const updateItems = () => {
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="flex justify-between text-xl font-semibold leading-tight text-gray-800">
-                <p>
-                    Items
-                    <i class="fa-solid fa-user-gear"></i>
-                </p>
-                <Link 
-                    :href="route('items.create')"
-                    class="px-4 py-2 mr-3 text-sm text-green-600 transition border border-green-300 rounded-full hover:bg-green-600 hover:text-white hover:border-transparent hover:cursor-pointer"
-                >
-                    Add Item
-                </Link>
-            </h2>
+            <div class="flex justify-between">
+                <div>
+                    <h2 class="text-xl font-semibold leading-tight text-gray-800">
+                        Items
+                    </h2>
+                </div>
+                <div>
+                    <Link 
+                        :href="route('items.create')"
+                        class="px-4 py-2 mr-3 text-sm text-green-600 transition border border-green-300 rounded-full hover:bg-green-600 hover:text-white hover:border-transparent hover:cursor-pointer"
+                    >
+                        Add Item
+                    </Link>
+                    <button class="px-4 py-2 mr-3 text-sm text-green-600 transition border border-green-300 rounded-full hover:bg-green-600 hover:text-white hover:border-transparent hover:cursor-pointer" :disabled="searchedItems.length === 0" :class="{ 'hover:cursor-not-allowed': searchedItems.length === 0 }" @click="batchStatusEdit">Batch Status Change</button>
+                    <button class="px-4 py-2 mr-3 text-sm text-green-600 transition border border-green-300 rounded-full hover:bg-green-600 hover:text-white hover:border-transparent hover:cursor-pointer" :disabled="searchedItems.length === 0" :class="{ 'hover:cursor-not-allowed': searchedItems.length === 0 }" @click="batchWeightEdit">Batch Weight Change</button>
+                </div>
+            </div>
         </template>
 
         <div class="py-12">
@@ -116,14 +148,13 @@ const updateItems = () => {
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 flex flex-col gap-8">
                         <div class="flex justify-end">
-                            <SearchInput />
-                            <PrimaryButton class="ms-4 hover:cursor-pointer" :disabled="selectedItems.length === 0" :class="{ 'hover:cursor-not-allowed': selectedItems.length === 0 }" @click="batchEdit">Batch Edit</PrimaryButton>
+                            <SearchInput :items="items.data" @update:selected-items="handleSearchedItems" />
                         </div>
                         <div class="flex justify-center">
                             <table class="block overflow-y-auto whitespace-nowrap divide-y divide-gray-200">
                                 <thead class="bg-gray-50">
                                     <tr>
-                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
+                                        <!-- <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
                                             <label class="flex items-center justify-center">
                                                 <Checkbox 
                                                     name="check-all" 
@@ -132,7 +163,7 @@ const updateItems = () => {
                                                     @update:checked="toggleSelectAll"
                                                 />
                                             </label>
-                                        </th>
+                                        </th> -->
                                         <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
                                             Serial Number
                                         </th>
@@ -182,7 +213,7 @@ const updateItems = () => {
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
                                     <tr v-for="item in items.data" :key="item.id">
-                                        <td class="px-6 py-4 whitespace-nowrap">
+                                        <!-- <td class="px-6 py-4 whitespace-nowrap">
                                             <label class="flex items-center justify-center">
                                                 <Checkbox 
                                                     name="check-all" 
@@ -191,7 +222,7 @@ const updateItems = () => {
                                                     @update:checked="updateSelectedItems"
                                                 />
                                             </label>
-                                        </td>
+                                        </td> -->
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <div class="flex items-center justify-center">
                                                 <div>
@@ -379,7 +410,7 @@ const updateItems = () => {
             </div>
         </div>
 
-        <DialogModal :show="showModal" @close="showModal = false">
+        <DialogModal :show="showStatusModal" @close="showStatusModal = false">
             <template #title> Status Update </template>
 
             <template #content>
@@ -436,13 +467,87 @@ const updateItems = () => {
             </template>
 
             <template #footer>
-                <SecondaryButton @click="showModal = false"> Close </SecondaryButton>
+                <SecondaryButton @click="showStatusModal = false"> Close </SecondaryButton>
                 
                 <PrimaryButton 
                     class="ml-4" 
                     :class="{ 'opacity-25': updateItemStatusForm.processing }"
                     :disabled="updateItemStatusForm.processing"
-                    @click="updateItems"
+                    @click="updateItemsStatus"
+                > 
+                    Save
+                </PrimaryButton>
+            </template>
+        </DialogModal>
+
+        <DialogModal :show="showWeightModal" @close="showWeightModal = false">
+            <template #title> Weight Update </template>
+
+            <template #content>
+                <div class="flex flex-col gap-8">
+                    <div> Update the weight of the items. </div>
+
+                    <div>
+                        <InputLabel for="operator" value="Operator" />
+
+                        <Select
+                            id="operator"
+                            :options="operators.data"
+                            v-model="updateItemWeightForm.operator_id"
+                            class="mt-1 block w-full"
+                            autofocus
+                            required
+                        />
+                    </div>
+
+                    <div class="mt-4">
+                        <InputLabel for="gross_weight" value="Weight" />
+
+                        <div class="flex gap-4">
+                            <TextInput
+                                id="gross_weight"
+                                type="number"
+                                class="mt-1 block w-full"
+                                v-model="updateItemWeightForm.gross_weight"
+                                required
+                            />
+
+                            <PrimaryButton>Get gross weight</PrimaryButton>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <InputLabel for="date_time" value="Date and Time" />
+
+                        <DateTimePicker
+                            id="date_time"
+                            class="mt-1 block"
+                            required
+                            v-model="updateItemWeightForm.date_time"
+                        />
+                    </div>
+
+                    <div>
+                        <InputLabel for="note" value="Note (optional)" />
+
+                        <TextInput 
+                            id="note"
+                            type="text"
+                            class="mt-1 block w-full"
+                            v-model="updateItemWeightForm.note"
+                        />
+                    </div>
+                </div>
+            </template>
+
+            <template #footer>
+                <SecondaryButton @click="showWeightModal = false"> Close </SecondaryButton>
+                
+                <PrimaryButton 
+                    class="ml-4" 
+                    :class="{ 'opacity-25': updateItemWeightForm.processing }"
+                    :disabled="updateItemWeightForm.processing"
+                    @click="updateItemsWeight"
                 > 
                     Save
                 </PrimaryButton>
