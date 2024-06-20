@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue';
-import { Head, router, useForm } from '@inertiajs/vue3';
+import { Head, useForm } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
@@ -42,7 +42,6 @@ defineProps({
 });
 
 const showCreateConfirmModal = ref(false);
-// const showContinueModal = ref(false);
 
 const form = useForm({
     operator_id: "1",
@@ -59,10 +58,6 @@ const form = useForm({
     appearance_id: "",
 });
 
-const confirmItemCreation = () => {
-    showCreateConfirmModal.value = true;
-}
-
 const createItem = () => {
     form.post(route('items.store'), {
         onFinish: () => {
@@ -76,27 +71,12 @@ const createItem = () => {
             form.color_id = '';
             form.clarity_id = '';
             form.appearance_id = '';
-            // showContinueModal.value = true;
         },
     });
 }
 
-const continueCreation = () => {
-    form.date_time = new Date();
-    form.batch_id = '';
-    form.metrc_id = '';
-    form.tare_weight = 0;
-    form.gross_weight = 0;
-    form.color_id = '';
-    form.clarity_id = '';
-    form.appearance_id = '';
-
-    showContinueModal.value = false;
-}
-
-const cancelCreation = () => {
-    showContinueModal.value = false;
-    router.get(route('items.index'));
+const submit = () => {
+    showCreateConfirmModal.value = true;
 }
 
 const cancel = () => {
@@ -118,10 +98,10 @@ const cancel = () => {
                     <div class="p-6">
                         <p class="text-gray-900 mb-6">Select attributes for an item.</p>
 
-                        <div class="flex flex-col gap-8">
+                        <form class="flex flex-col gap-8" @submit.prevent="submit">
                             <div class="flex gap-6">
                                 <div class="w-1/3">
-                                    <InputLabel for="operator" value="Operator" />
+                                    <InputLabel for="operator" value="Operator *" />
 
                                     <Select
                                         id="operator"
@@ -134,7 +114,7 @@ const cancel = () => {
                                 </div>
 
                                 <div class="w-1/3">
-                                    <InputLabel for="item_type" value="Item Type" />
+                                    <InputLabel for="item_type" value="Item Type *" />
                                     
                                     <Select
                                         id="item_type"
@@ -183,7 +163,7 @@ const cancel = () => {
 
                             <div class="flex gap-6">
                                 <div class="w-1/2">
-                                    <InputLabel for="strain" value="Strain" />
+                                    <InputLabel for="strain" value="Strain *" />
         
                                     <Select
                                         id="strain"
@@ -195,7 +175,7 @@ const cancel = () => {
                                 </div>
     
                                 <div class="w-1/2">
-                                    <InputLabel for="product" value="Product" />
+                                    <InputLabel for="product" value="Product *" />
         
                                     <Select
                                         id="product"
@@ -225,7 +205,7 @@ const cancel = () => {
                                 </div>
     
                                 <div class="w-1/2">
-                                    <InputLabel for="gross_weight" :value="`Gross Weight (${itemTypes.data[form.item_type_id - 1] ? itemTypes.data[form.item_type_id - 1]?.weight_unit.abbreviation : ''})`" />
+                                    <InputLabel for="gross_weight" :value="`Gross Weight (${itemTypes.data[form.item_type_id - 1] ? itemTypes.data[form.item_type_id - 1]?.weight_unit.abbreviation : ''}) *`" />
         
                                     <div class="flex gap-4">
                                         <TextInput
@@ -279,11 +259,11 @@ const cancel = () => {
                             <div class="flex justify-end gap-6">
                                 <SecondaryButton @click="cancel">Cancel</SecondaryButton>
 
-                                <PrimaryButton @click="confirmItemCreation">
+                                <PrimaryButton>
                                     Save
                                 </PrimaryButton>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -309,19 +289,5 @@ const cancel = () => {
                 </PrimaryButton>
             </template>
         </ConfirmationModal>
-
-        <!-- <ConfirmationModal :show="showContinueModal" @close="showContinueModal = false">
-            <template #title> Confirm </template>
-
-            <template #content>
-                Do you want to continue adding item?
-            </template>
-
-            <template #footer>
-                <SecondaryButton @click="cancelCreation"> No </SecondaryButton>
-
-                <PrimaryButton class="ml-3" @click="continueCreation"> Yes </PrimaryButton>
-            </template>
-        </ConfirmationModal> -->
     </AuthenticatedLayout>
 </template>
