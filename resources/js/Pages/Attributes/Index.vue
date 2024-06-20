@@ -20,6 +20,9 @@ const props = defineProps({
         type: Object,
         required: true,
     },
+    weightUnits: {
+        type: Object,
+    },
     strains: {
         type: Object,
         required: true,
@@ -74,6 +77,7 @@ watch(() => props.flash, updateFlashMessage, { immediate: true });
 const form = useForm({
     value: '',
     type: '',
+    weight_unit: '',
 });
 
 const createAttribute = () => {
@@ -180,6 +184,17 @@ const createAttribute = () => {
                             class="mt-1 block w-full"
                             autofocus
                             required
+                        />
+                    </div>
+
+                    <div v-if="form.type === '1'">
+                        <InputLabel for="weightUnit" value="Weight Unit" />
+
+                        <Select 
+                            id="weightUnit"
+                            :options="weightUnits.data"
+                            v-model="form.weight_unit"
+                            class="mt-1 block w-full"
                         />
                     </div>
 

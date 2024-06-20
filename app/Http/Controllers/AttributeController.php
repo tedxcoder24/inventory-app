@@ -97,13 +97,14 @@ class AttributeController extends Controller
     {
         $attr_types = ['Operator', 'Item type', 'Strain', 'Product', 'Color', 'Clarity', 'Appearance', 'Status'];
         $selected_type = $attr_types[$request->type];
+        $selected_weight_unit = $request->weight_unit;
 
         switch ($selected_type) {
             case 'Operator':
                 Operator::create(['operator' => $request->value]);
                 break;
-            case 'Item Type':
-                ItemType::create(['item_type' => $request->value]);
+            case 'Item type':
+                ItemType::create(['item_type' => $request->value, 'weight_unit_id' => $selected_weight_unit]);
                 break;
             case 'Strain':
                 Strain::create(['strain' => $request->value]);

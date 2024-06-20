@@ -24,6 +24,7 @@ class AttributeStoreRequest extends FormRequest
         return [
             'type' => 'required|string|max:255',
             'value' => 'required|string|max:255',
+            'weight_unit' => 'nullable|exists:weight_units,id',
         ];
     }
 }
