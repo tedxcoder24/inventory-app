@@ -5,6 +5,7 @@ import Select from '@/Components/Select.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
+import TextInput from '@/Components/TextInput.vue';
 
 const props = defineProps({
     config_data: {
@@ -75,7 +76,75 @@ const cancel = () => {
                         <p class="text-gray-900 mb-6">Select attributes for config.</p>
 
                         <form class="flex flex-col gap-8" @submit.prevent="submit">
-                            <div class="flex justify-around gap-8">
+                            <div class="flex justify-around">
+                                <div>
+                                    <InputLabel for="serial_number" value="Last Serial Number" />
+
+                                    <div class="flex gap-4">
+                                        <TextInput
+                                            id="serial_number"
+                                            type="text"
+                                            class="mt-1 block w-full"
+                                            v-model="form.last_serial_number"
+                                            required
+                                        />
+
+                                        <SecondaryButton>Get Serial Number</SecondaryButton>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex justify-around">
+                                <div>
+                                    <InputLabel for="serial_port" value="Serial Port" />
+
+                                    <TextInput
+                                        id="serial_port"
+                                        type="text"
+                                        class="mt-1 block w-full"
+                                        v-model="form.serial_port"
+                                        required
+                                    />
+                                </div>
+
+                                <div>
+                                    <InputLabel for="label_printer" value="Label Printer" />
+
+                                    <TextInput
+                                        id="label_printer"
+                                        type="text"
+                                        class="mt-1 block w-full"
+                                        v-model="form.label_printer"
+                                        required
+                                    />
+                                </div>
+
+                                <div>
+                                    <InputLabel for="report_printer" value="Report Printer" />
+
+                                    <TextInput
+                                        id="report_printer"
+                                        type="text"
+                                        class="mt-1 block w-full"
+                                        v-model="form.report_printer"
+                                        required
+                                    />
+                                </div>
+
+                                <div>
+                                    <InputLabel for="image_directory" value="Image Directory" />
+
+                                    <TextInput
+                                        id="image_directory"
+                                        type="text"
+                                        class="mt-1 block w-full"
+                                        v-model="form.image_directory"
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            <div class="flex justify-around">
                                 <div>
                                     <InputLabel for="baudrate" value="Baud Rate" />
         
@@ -127,7 +196,7 @@ const cancel = () => {
                             </div>
 
                             <div class="flex justify-center">
-                                <SecondaryButton @click="cancel">Cancel</SecondaryButton>
+                                <SecondaryButton @click="cancel"> Cancel </SecondaryButton>
 
                                 <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                                     Save
