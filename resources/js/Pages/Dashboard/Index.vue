@@ -148,46 +148,6 @@ const getAttributeKeys = (item) => {
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6">
                         <div class="flex flex-col justify-center gap-8">
-                            <div>
-                                <h2 class="font-semibold text-center text-xl text-gray-700 leading-tight"> Inventory Stats </h2>
-                            </div>
-
-                            <div class="flex justify-between">
-                                <form class="flex gap-6" @submit.prevent="submit">
-                                    <div>
-                                        <InputLabel for="from_date_time" value="From" />
-    
-                                        <DateTimePicker
-                                            id="from_date_time"
-                                            class="mt-1 block"
-                                            required
-                                            v-model="form.from_date_time"
-                                        />
-                                    </div>
-    
-                                    <div>
-                                        <InputLabel for="to_date_time" value="To" />
-    
-                                        <DateTimePicker
-                                            id="to_date_time"
-                                            class="mt-1 block"
-                                            required
-                                            v-model="form.to_date_time"
-                                        />
-                                    </div>
-    
-                                    <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                                        View
-                                    </PrimaryButton>
-                                </form>
-
-                                <div class="flex gap-6">
-                                    <SecondaryButton @click="viewCurrentWeek">Current Week</SecondaryButton>
-                                    <SecondaryButton @click="viewPreviousWeek">Previous Week</SecondaryButton>
-                                    <SecondaryButton @click="viewPreviousMonth">Previous Month</SecondaryButton>
-                                </div>
-                            </div>
-
                             <div class="flex gap-6">
                                 <div class="flex flex-col w-1/2 bg-gray-100">
                                     <div class="flex justify-center items-center p-4 bg-emerald-200">
