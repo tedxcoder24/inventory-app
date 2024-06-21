@@ -96,6 +96,17 @@ const viewCurrentWeek = () => {
     form.to_date_time = currentWeek.end;
     submit();
 }
+
+const getAttributeKeys = (item) => {
+    if (item.statuses) {
+        const statusKeys = Object.keys(item.statuses);
+        if (statusKeys.length > 0) {
+            const status = item.statuses[statusKeys[0]];
+            return Object.keys(status).filter(key => key !== 'weight' && key !== 'count')[0];
+        }
+    }
+    return []
+}
 </script>
 
 <template>
@@ -159,10 +170,7 @@ const viewCurrentWeek = () => {
                                                 <th scope="col" class="px-6 py-3 text-lg font-medium tracking-wider text-center text-gray-900 uppercase"> {{ item.product }} </th>
                                                 <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase"> grams </th>
                                                 <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase"> lbs </th>
-                                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase"> jar </th>
-                                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase"> pack </th>
-                                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase"> case </th>
-                                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase"> bag </th>
+                                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase"> {{ getAttributeKeys(item) }} </th>
                                             </tr>
                                         </thead>
                                         <tbody class="bg-white divide-y divide-gray-200">
@@ -198,34 +206,7 @@ const viewCurrentWeek = () => {
                                                     <div class="flex items-center justify-center">
                                                         <div>
                                                             <div class="text-sm font-medium text-gray-900">
-                                                                {{ status.jarCount }}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap">
-                                                    <div class="flex items-center justify-center">
-                                                        <div>
-                                                            <div class="text-sm font-medium text-gray-900">
-                                                                {{ status.packCount }}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap">
-                                                    <div class="flex items-center justify-center">
-                                                        <div>
-                                                            <div class="text-sm font-medium text-gray-900">
-                                                                {{ status.caseCount }}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap">
-                                                    <div class="flex items-center justify-center">
-                                                        <div>
-                                                            <div class="text-sm font-medium text-gray-900">
-                                                                {{ status.bagCount }}
+                                                                {{ status[getAttributeKeys(item)] }}
                                                             </div>
                                                         </div>
                                                     </div>
