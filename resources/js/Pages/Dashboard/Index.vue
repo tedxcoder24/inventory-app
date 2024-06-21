@@ -5,12 +5,22 @@ import DateTimePicker from '@/Components/DateTimePicker.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
+import StatsSection from './Partials/StatsSection.vue';
 
 const props = defineProps({
-    data: { type: Array },
+    current_data: { type: Array },
+    current_week_data: { type: Array },
+    previous_week_data: { type: Array },
+    current_month_data: { type: Array },
+    previous_month_data: { type: Array },
     from_date: { type: Date },
     to_date: { type: Date }
 });
+
+function formatDate(date) {
+    const options = { month: '2-digit', day: '2-digit', year: '2-digit' };
+    return date.toLocaleDateString('en-US', options);
+}
 
 function getCurrentWeekDates() {
     const now = new Date();
@@ -28,7 +38,7 @@ function getCurrentWeekDates() {
     lastDay.setDate(now.getDate() + diffToLastDay);
     lastDay.setHours(23, 59, 59, 999);
 
-    return { start: firstDay, end: lastDay };
+    return { start: formatDate(firstDay), end: formatDate(lastDay) };
 }
 
 const getPreviousWeekDates = () => {
@@ -48,7 +58,7 @@ const getPreviousWeekDates = () => {
     firstDayOfPreviousWeek.setHours(0, 0, 0, 0);
     lastDayOfPreviousWeek.setHours(23, 59, 59, 999);
     
-    return { start: firstDayOfPreviousWeek, end: lastDayOfPreviousWeek };
+    return { start: formatDate(firstDayOfPreviousWeek), end: formatDate(lastDayOfPreviousWeek) };
 }
 
 const getPreviousMonthDates = () => {
@@ -64,7 +74,23 @@ const getPreviousMonthDates = () => {
     firstDayOfPreviousMonth.setHours(0, 0, 0, 0);
     lastDayOfPreviousMonth.setHours(23, 59, 59, 999);
     
-    return { start: firstDayOfPreviousMonth, end: lastDayOfPreviousMonth };
+    return { start: formatDate(firstDayOfPreviousMonth), end: formatDate(lastDayOfPreviousMonth) };
+}
+
+const getCurrentMonthDates = () => {
+    const now = new Date();
+    const firstDayOfCurrentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    const firstDayOfPreviousMonth = new Date(firstDayOfCurrentMonth);
+    firstDayOfPreviousMonth.setMonth(firstDayOfCurrentMonth.getMonth() - 1);
+    
+    const lastDayOfCurrentMonth = new Date(firstDayOfCurrentMonth.getFullYear(), firstDayOfCurrentMonth.getMonth() + 1, 0);
+
+    // Set hours to the start of the day
+    firstDayOfCurrentMonth.setHours(0, 0, 0, 0);
+    lastDayOfCurrentMonth.setHours(23, 59, 59, 999);
+    
+    return { start: formatDate(firstDayOfCurrentMonth), end: formatDate(lastDayOfCurrentMonth) };
 }
 
 const form = useForm({
@@ -162,7 +188,55 @@ const getAttributeKeys = (item) => {
                                 </div>
                             </div>
 
-                            <div class="flex flex-wrap justify-around gap-6">
+                            <div class="flex gap-6">
+                                <div class="flex flex-col w-1/2 bg-gray-100">
+                                    <div class="flex justify-center items-center p-4 bg-emerald-200">
+                                        <h2 class="font-semibold text-center text-xl text-gray-700 leading-tight"> CURRENT INVENTORY </h2>
+                                    </div>
+
+                                    <StatsSection :data="current_data" />
+                                </div>
+
+                                <div class="flex flex-col w-1/2 bg-gray-100">
+                                    <div class="flex justify-center items-center p-4 bg-orange-200">
+                                        <h2 class="font-semibold text-center text-xl text-gray-700 leading-tight"> INVENTORY STATS </h2>
+                                    </div>
+
+                                    <div class="flex flex-col">
+                                        <div class="flex justify-center items-center p-2 bg-red-100">
+                                            <h2 class="text-center text-base text-gray-700 leading-tight"> Current Week: {{ getCurrentWeekDates().start }} - {{ getCurrentWeekDates().end }} </h2>
+                                        </div>
+
+                                        <StatsSection :data="current_week_data" />
+                                    </div>
+
+                                    <div class="flex flex-col">
+                                        <div class="flex justify-center items-center p-2 bg-red-100">
+                                            <h2 class="text-center text-base text-gray-700 leading-tight"> Previous Week: {{ getPreviousWeekDates().start }} - {{ getPreviousWeekDates().end }} </h2>
+                                        </div>
+
+                                        <StatsSection :data="previous_week_data" />
+                                    </div>
+
+                                    <div class="flex flex-col">
+                                        <div class="flex justify-center items-center p-2 bg-red-100">
+                                            <h2 class="text-center text-base text-gray-700 leading-tight"> Current Month: {{ getCurrentMonthDates().start }} - {{ getCurrentMonthDates().end }} </h2>
+                                        </div>
+
+                                        <StatsSection :data="current_month_data" />
+                                    </div>
+
+                                    <div class="flex flex-col">
+                                        <div class="flex justify-center items-center p-2 bg-red-100">
+                                            <h2 class="text-center text-base text-gray-700 leading-tight"> Previous Month: {{ getPreviousMonthDates().start }} - {{ getPreviousMonthDates().end }} </h2>
+                                        </div>
+
+                                        <StatsSection :data="previous_month_data" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- <div class="flex flex-wrap justify-around gap-6">
                                 <div v-for="(item, id) in data" :key="id">
                                     <table class="block overflow-y-auto whitespace-nowrap divide-y divide-gray-200">
                                         <thead class="bg-gray-50">
@@ -215,7 +289,7 @@ const getAttributeKeys = (item) => {
                                         </tbody>
                                     </table>
                                 </div>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                 </div>
