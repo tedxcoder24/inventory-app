@@ -281,7 +281,7 @@ const handleSearchedItems = (items) => {
                                             <div class="flex items-center justify-center">
                                                 <div>
                                                     <div class="text-sm font-medium text-gray-900">
-                                                        {{ item.tare_weight }}
+                                                        {{ item.tare_weight }} ({{ item.weight_unit }})
                                                     </div>
                                                 </div>
                                             </div>
@@ -290,7 +290,7 @@ const handleSearchedItems = (items) => {
                                             <div class="flex items-center justify-center">
                                                 <div>
                                                     <div class="text-sm font-medium text-gray-900">
-                                                        {{ item.gross_weight }}
+                                                        {{ item.gross_weight }} ({{ item.weight_unit }})
                                                     </div>
                                                 </div>
                                             </div>
@@ -299,7 +299,7 @@ const handleSearchedItems = (items) => {
                                             <div class="flex items-center justify-center">
                                                 <div>
                                                     <div class="text-sm font-medium text-gray-900">
-                                                        {{ item.gross_weight - item.tare_weight }}
+                                                        {{ item.gross_weight - item.tare_weight }} ({{ item.weight_unit }})
                                                     </div>
                                                 </div>
                                             </div>

@@ -29,6 +29,7 @@ class ItemResource extends JsonResource
             'date_time' => $this->date_time,
             'serial_number' => $this->serial_number,
             'item_type' => ItemType::where('id', $this->item_type_id)->first()->item_type,
+            'weight_unit' => ItemType::where('id', $this->item_type_id)->first()->weightUnit->abbreviation,
             'batch_id' => $this->batch_id,
             'metrc_id' => $this->metrc_id,
             'tare_weight' => $this->tare_weight,
