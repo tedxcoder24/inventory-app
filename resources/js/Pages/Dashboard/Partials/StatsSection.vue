@@ -6,14 +6,16 @@ defineProps({
 
 <template>
     <section>
-        <div class="p-4">
+        <div class="p-1">
             <div class="flex flex-col gap-6">
                 <div v-for="(item, dataId) in data" :key="dataId">
-                    <div class="flex justify-around flex-wrap gap-6 m-4">
+                    <h2 class="font-semibold text-xl text-gray-800 leading-tight"> {{ item.itemType }} </h2>
+
+                    <div class="flex flex-wrap justify-around gap-4 m-4">
                         <div v-for="(product, productId) in item.products" :key="productId">
-                            <table class="block overflow-y-auto whitespace-nowrap border border-gray-200">
+                            <table class="block overflow-y-auto whitespace-nowrap border border-gray-200 w-full">
                                 <thead class="bg-gray-50">
-                                    <tr class="">
+                                    <tr>
                                         <th scope="col" class="px-6 py-3 text-lg font-medium tracking-wider text-center text-gray-900 uppercase border-r border-b border-gray-200 bg-yellow-200"> {{ product.product }} </th>
                                         <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase border-r border-b border-gray-200 bg-indigo-200"> grams </th>
                                         <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase border-r border-b border-gray-200 bg-indigo-200"> lbs </th>
@@ -64,7 +66,7 @@ defineProps({
                         </div>
                     </div>
 
-                    <hr />
+                    <hr class="border border-gray-400" />
                 </div>
             </div>
         </div>
