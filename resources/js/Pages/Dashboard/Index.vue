@@ -195,61 +195,6 @@ const getAttributeKeys = (item) => {
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- <div class="flex flex-wrap justify-around gap-6">
-                                <div v-for="(item, id) in data" :key="id">
-                                    <table class="block overflow-y-auto whitespace-nowrap divide-y divide-gray-200">
-                                        <thead class="bg-gray-50">
-                                            <tr>
-                                                <th scope="col" class="px-6 py-3 text-lg font-medium tracking-wider text-center text-gray-900 uppercase"> {{ item.product }} </th>
-                                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase"> grams </th>
-                                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase"> lbs </th>
-                                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase"> {{ getAttributeKeys(item) }} </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="bg-white divide-y divide-gray-200">
-                                            <tr v-for="(status, statusId) in item.statuses" :key="statusId">
-                                                <td class="px-6 py-4 whitespace-nowrap">
-                                                    <div class="flex items-center justify-center">
-                                                        <div>
-                                                            <div class="text-sm font-medium text-gray-900">
-                                                                {{ statusId }}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap">
-                                                    <div class="flex items-center justify-center">
-                                                        <div>
-                                                            <div class="text-sm font-medium text-gray-900">
-                                                                {{ status.weight }}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap">
-                                                    <div class="flex items-center justify-center">
-                                                        <div>
-                                                            <div class="text-sm font-medium text-gray-900">
-                                                                {{ (status.weight * 0.00220642).toFixed(2) }}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap">
-                                                    <div class="flex items-center justify-center">
-                                                        <div>
-                                                            <div class="text-sm font-medium text-gray-900">
-                                                                {{ status[getAttributeKeys(item)] }}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div> -->
                         </div>
                     </div>
                 </div>

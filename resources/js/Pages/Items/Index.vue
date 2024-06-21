@@ -150,6 +150,7 @@ const handleSearchedItems = (items) => {
                         <div class="flex justify-end">
                             <SearchInput :items="items.data" @update:selected-items="handleSearchedItems" />
                         </div>
+
                         <div class="flex justify-center">
                             <table class="block overflow-y-auto whitespace-nowrap divide-y divide-gray-200">
                                 <thead class="bg-gray-50">
@@ -169,6 +170,9 @@ const handleSearchedItems = (items) => {
                                         </th>
                                         <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
                                             Operator
+                                        </th>
+                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
+                                            Status
                                         </th>
                                         <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
                                             Date Time
@@ -245,6 +249,15 @@ const handleSearchedItems = (items) => {
                                             <div class="flex items-center justify-center">
                                                 <div>
                                                     <div class="text-sm font-medium text-gray-900">
+                                                        {{ item.status }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center justify-center">
+                                                <div>
+                                                    <div class="text-sm font-medium text-gray-900">
                                                         {{ item.date_time }}
                                                     </div>
                                                 </div>
@@ -281,7 +294,7 @@ const handleSearchedItems = (items) => {
                                             <div class="flex items-center justify-center">
                                                 <div>
                                                     <div class="text-sm font-medium text-gray-900">
-                                                        {{ item.tare_weight }}
+                                                        {{ item.tare_weight }} ({{ item.weight_unit }})
                                                     </div>
                                                 </div>
                                             </div>
@@ -290,7 +303,7 @@ const handleSearchedItems = (items) => {
                                             <div class="flex items-center justify-center">
                                                 <div>
                                                     <div class="text-sm font-medium text-gray-900">
-                                                        {{ item.gross_weight }}
+                                                        {{ item.gross_weight }} ({{ item.weight_unit }})
                                                     </div>
                                                 </div>
                                             </div>
@@ -299,7 +312,7 @@ const handleSearchedItems = (items) => {
                                             <div class="flex items-center justify-center">
                                                 <div>
                                                     <div class="text-sm font-medium text-gray-900">
-                                                        {{ item.gross_weight - item.tare_weight }}
+                                                        {{ item.gross_weight - item.tare_weight }} ({{ item.weight_unit }})
                                                     </div>
                                                 </div>
                                             </div>

@@ -1,10 +1,12 @@
 <script setup>
 import { ref } from 'vue';
 import { router } from '@inertiajs/vue3';
-import { Link } from '@inertiajs/vue3';
 import ConfirmationModal from './ConfirmationModal.vue';
 import DangerButton from './DangerButton.vue';
 import SecondaryButton from './SecondaryButton.vue';
+import DialogModal from './DialogModal.vue';
+import InputLabel from './InputLabel.vue';
+import TextInput from './TextInput.vue';
 
 const props = defineProps({
     header: {
@@ -18,7 +20,10 @@ const props = defineProps({
 });
 
 const attrToDelete = ref(null);
+const attrToEdit = ref(null);
+const newAttribute = ref('');
 const showModal = ref(false);
+const showEditModal = ref(false);
 
 const confirmAttributeDeletion = (attr) => {
     showModal.value = true;
@@ -28,6 +33,7 @@ const confirmAttributeDeletion = (attr) => {
 const updateAttribute = (attr) => {
     router.put(route('attributes.update', attr.value), {
         enabled: attr.enabled ? false : true,
+        text: attr.text,
         attribute: props.header,
     });
 }
@@ -40,6 +46,22 @@ const deleteAttr = () => {
         preserveScroll: true,
         preserveState: true,
         onSuccess: () => (showModal.value = false)
+    });
+}
+
+const openEditModal = (attr) => {
+    showEditModal.value = true;
+    attrToEdit.value = attr;
+    newAttribute.value = attr.text;
+}
+
+const editAttr = () => {
+    router.put(route('attributes.update', attrToEdit.value.value), {
+        enabled: attrToEdit.value.enabled ? true : false,
+        text: newAttribute.value,
+        attribute: props.header
+    }, {
+        onSuccess: () => (showEditModal.value = false)
     });
 }
 </script>
@@ -98,8 +120,9 @@ const deleteAttr = () => {
 
                 <td class="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
                     <div class="flex items-center justify-center">
-                        <Link
-                            :href="`/attributes/${attr.value}/edit`"
+                        <a
+                            href="#"
+                            @click="openEditModal(attr)"
                             class="float-left px-4 py-2 text-green-400 duration-100 rounded hover:text-green-600"
                         >
                             <svg
@@ -115,7 +138,7 @@ const deleteAttr = () => {
                                     stroke-width="2"
                                     d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                             </svg>
-                        </Link>
+                        </a>
                         <a
                             href="#"
                             @click="confirmAttributeDeletion(attr)"
@@ -160,4 +183,33 @@ const deleteAttr = () => {
             </DangerButton>
         </template>
     </ConfirmationModal>
+
+    <DialogModal :show="showEditModal" @close="showEditModal = false">
+        <template #title> Edit attribute </template>
+
+        <template #content>
+            <div>
+                <InputLabel for="edit_attribute" value="Attribute" />
+
+                <TextInput 
+                    id="edit_attribute"
+                    type="text"
+                    class="mt-1 block w-full"
+                    v-model="newAttribute"
+                    required
+                />
+            </div>
+        </template>
+
+        <template #footer>
+            <SecondaryButton @click="showEditModal = false"> Cancel </SecondaryButton>
+
+            <DangerButton
+                class="ml-3"
+                @click="editAttr(attr)"
+            >
+                Edit
+            </DangerButton>
+        </template>
+    </DialogModal>
 </template>
