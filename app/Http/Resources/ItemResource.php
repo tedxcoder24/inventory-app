@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use App\Models\Appearance;
 use App\Models\Clarity;
 use App\Models\Color;
+use App\Models\Item;
 use App\Models\Operator;
 use App\Models\ItemType;
 use App\Models\Product;
@@ -26,6 +27,7 @@ class ItemResource extends JsonResource
         return [
             'id' => $this->id,
             'operator' => Operator::where('id', $this->operator_id)->first()->operator,
+            'status' => Item::findOrFail($this->id)->statuses()->latest()->first()->status->status,
             'date_time' => $this->date_time,
             'serial_number' => $this->serial_number,
             'item_type' => ItemType::where('id', $this->item_type_id)->first()->item_type,
