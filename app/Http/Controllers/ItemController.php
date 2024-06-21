@@ -149,10 +149,12 @@ class ItemController extends Controller
         ])->findOrFail($id);
 
         $current_weight = $item->weights()->orderBy('date_time')->get();
+        $weight_unit = ItemType::findOrFail($item->item_type_id)->weightUnit()->first();
 
         return Inertia::render('Items/Show', [
             'item' => $item,
             'currentWeight' => $current_weight,
+            'weightUnit' => $weight_unit,
         ]);
     }
 

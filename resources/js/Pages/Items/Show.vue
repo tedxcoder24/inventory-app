@@ -11,6 +11,10 @@ defineProps({
         type: Object,
         required: true,
     },
+    weightUnit: {
+        type: Object,
+        required: true,
+    },
 });
 </script>
 
@@ -83,15 +87,15 @@ defineProps({
                                     <div class="flex flex-col gap-6">
                                         <div class="text-lg font-medium text-gray-900"> 
                                             <label class="text-base font-medium text-gray-500"> Tare Weight: </label>
-                                            {{ item.tare_weight }} 
+                                            {{ item.tare_weight }} ({{ weightUnit.abbreviation }})
                                         </div>
                                         <div class="text-lg font-medium text-gray-900"> 
                                             <label class="text-base font-medium text-gray-500"> Gross Weight: </label>
-                                            {{ item.gross_weight }} 
+                                            {{ item.gross_weight }} ({{ weightUnit.abbreviation }})
                                         </div>
                                         <div class="text-lg font-medium text-gray-900"> 
                                             <label class="text-base font-medium text-gray-500"> Current Net Weight: </label>
-                                            {{ item.gross_weight - item.tare_weight }} 
+                                            {{ item.gross_weight - item.tare_weight }} ({{ weightUnit.abbreviation }})
                                         </div>
                                     </div>
                                     <div class="flex justify-around gap-6">
