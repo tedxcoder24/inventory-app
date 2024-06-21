@@ -9,6 +9,7 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import DateTimePicker from '@/Components/DateTimePicker.vue';
 import ConfirmationModal from '@/Components/ConfirmationModal.vue';
+import StrainSelectForm from './Partials/StrainSelectForm.vue';
 
 const props = defineProps({
     item: { type: Object },
@@ -68,7 +69,7 @@ const cancel = () => {
                         <div class="flex flex-col gap-8">
                             <div class="flex gap-6">
                                 <div class="w-1/3">
-                                    <InputLabel for="operator" value="Operator" />
+                                    <InputLabel for="operator" value="Operator *" />
 
                                     <Select
                                         id="operator"
@@ -81,7 +82,7 @@ const cancel = () => {
                                 </div>
 
                                 <div class="w-1/3">
-                                    <InputLabel for="item_type" value="Item Type" />
+                                    <InputLabel for="item_type" value="Item Type *" />
                                     
                                     <Select
                                         id="item_type"
@@ -106,7 +107,7 @@ const cancel = () => {
 
                             <div class="flex gap-6">
                                 <div>
-                                    <InputLabel for="status" value="Status" />
+                                    <InputLabel for="status" value="Status *" />
         
                                     <Select
                                         id="status"
@@ -144,19 +145,20 @@ const cancel = () => {
 
                             <div class="flex gap-6">
                                 <div class="w-1/2">
-                                    <InputLabel for="strain" value="Strain" />
-        
-                                    <Select
+                                    <InputLabel for="strain" value="Strain *" />
+
+                                    <StrainSelectForm 
                                         id="strain"
                                         :options="strains.data"
                                         v-model="form.strain_id"
+                                        @addStrain=""
                                         class="mt-1 block w-full"
                                         required
                                     />
                                 </div>
-    
+
                                 <div class="w-1/2">
-                                    <InputLabel for="product" value="Product" />
+                                    <InputLabel for="product" value="Product *" />
         
                                     <Select
                                         id="product"

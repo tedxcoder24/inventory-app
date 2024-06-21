@@ -126,7 +126,8 @@ class AttributeController extends Controller
                 break;
         }
 
-        return redirect()->route('attributes.index')->with('success', 'Attribute has been created!');
+        return back()->with('success','Attribute has been created!');
+        // return redirect()->route('attributes.index')->with('success', 'Attribute has been created!');
     }
 
     /**
