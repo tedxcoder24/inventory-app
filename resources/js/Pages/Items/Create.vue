@@ -9,6 +9,7 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import DateTimePicker from '@/Components/DateTimePicker.vue';
 import ConfirmationModal from '@/Components/ConfirmationModal.vue';
+import StrainSelectForm from './Partials/StrainSelectForm.vue';
 
 defineProps({
     operators: {
@@ -80,6 +81,9 @@ const submit = () => {
 
 const cancel = () => {
     form.get(route('items.index'));
+}
+
+const addNewStrain = (newStrain) => {
 }
 </script>
 
@@ -164,10 +168,18 @@ const cancel = () => {
                                 <div class="w-1/2">
                                     <InputLabel for="strain" value="Strain *" />
         
-                                    <Select
+                                    <!-- <Select
                                         id="strain"
                                         :options="strains.data"
                                         v-model="form.strain_id"
+                                        class="mt-1 block w-full"
+                                        required
+                                    /> -->
+                                    <StrainSelectForm 
+                                        id="strain"
+                                        :options="strains.data"
+                                        v-model="form.strain_id"
+                                        @addStrain=""
                                         class="mt-1 block w-full"
                                         required
                                     />
