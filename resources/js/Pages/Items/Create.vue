@@ -82,9 +82,6 @@ const submit = () => {
 const cancel = () => {
     form.get(route('items.index'));
 }
-
-const addNewStrain = (newStrain) => {
-}
 </script>
 
 <template>
