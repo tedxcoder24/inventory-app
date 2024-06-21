@@ -80,17 +80,13 @@ const cancel = () => {
                                 <div>
                                     <InputLabel for="serial_number" value="Last Serial Number" />
 
-                                    <div class="flex gap-4">
-                                        <TextInput
-                                            id="serial_number"
-                                            type="text"
-                                            class="mt-1 block w-full"
-                                            v-model="form.last_serial_number"
-                                            required
-                                        />
-
-                                        <SecondaryButton>Get Serial Number</SecondaryButton>
-                                    </div>
+                                    <TextInput
+                                        id="serial_number"
+                                        type="text"
+                                        class="mt-1 block w-full"
+                                        v-model="form.last_serial_number"
+                                        required
+                                    />
                                 </div>
                             </div>
 
