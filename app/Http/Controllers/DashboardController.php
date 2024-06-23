@@ -163,19 +163,23 @@ class DashboardController extends Controller
                     }
                 }
 
-                // Convert aggregated status data to array format
-                foreach ($statusAggregation as $statusData) {
-                    $productData['statuses'][] = [
-                        'status' => $statusData['status'],
-                        'weight' => $statusData['weight'],
-                        'count' => $statusData['count']
-                    ];
+                // Convert aggregated status data to array format if not empty
+                if (!empty($statusAggregation)) {
+                    foreach ($statusAggregation as $statusData) {
+                        $productData['statuses'][] = [
+                            'status' => $statusData['status'],
+                            'weight' => $statusData['weight'],
+                            'count' => $statusData['count']
+                        ];
+                    }
+                    $itemTypeData['products'][] = $productData;
                 }
-
-                $itemTypeData['products'][] = $productData;
             }
 
-            $data[] = $itemTypeData;
+            // Add item type data only if it has products with statuses
+            if (!empty($itemTypeData['products'])) {
+                $data[] = $itemTypeData;
+            }
         }
 
         foreach ($data as &$item) {
