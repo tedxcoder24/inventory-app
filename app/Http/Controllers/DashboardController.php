@@ -48,29 +48,35 @@ class DashboardController extends Controller
                 $statusAggregation = [];
 
                 foreach ($items as $item) {
-                    $firstStatus = $item->statuses()
+                    $statuses = $item->statuses()
                         ->whereBetween('date_time', [$from_date, $to_date])
-                        ->oldest()
-                        ->first();
+                        ->get();
 
-                    $firstWeight = $item->weights()
+                    $weights = $item->weights()
                         ->whereBetween('date_time', [$from_date, $to_date])
-                        ->oldest()
-                        ->first();
+                        ->get();
 
-                    if ($firstStatus && $firstWeight) {
-                        $statusName = $firstStatus->status->status;
-                        $grossWeight = $firstWeight->gross_weight;
+                    foreach ($statuses as $status) {
+                        $statusDateTime = Carbon::parse($status->date_time);
+                        foreach ($weights as $weight) {
+                            $weightDateTime = Carbon::parse($weight->date_time);
 
-                        // Aggregate status data
-                        if (!isset($statusAggregation[$statusName])) {
-                            $statusAggregation[$statusName] = [
-                                'status' => $statusName,
-                                'weight' => $grossWeight,
-                                'count' => 0
-                            ];
+                            // Ensure the status and weight have matching date times (or close to each other)
+                            if ($statusDateTime->isSameDay($weightDateTime)) {
+                                $statusName = $status->status->status;
+                                $grossWeight = $weight->gross_weight;
+
+                                // Aggregate status data
+                                if (!isset($statusAggregation[$statusName])) {
+                                    $statusAggregation[$statusName] = [
+                                        'status' => $statusName,
+                                        'weight' => $grossWeight,
+                                        'count' => 0
+                                    ];
+                                }
+                                $statusAggregation[$statusName]['count']++;
+                            }
                         }
-                        $statusAggregation[$statusName]['count']++;
                     }
                 }
 
