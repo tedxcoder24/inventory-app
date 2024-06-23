@@ -62,6 +62,14 @@ onMounted(() => {
 onBeforeUnmount(() => {
     document.removeEventListener('click', handleClickOutside);
 });
+
+const handleKeydown = (event) => {
+    if (showDropdown.value && filteredOptions.value.length > 0) {
+        if (event.key === 'Enter') {
+            selectOption(filteredOptions.value[0]);
+        }
+    }
+}
 </script>
 
 <template>
@@ -80,11 +88,17 @@ onBeforeUnmount(() => {
                 type="text"
                 @input="performSearch"
                 @focus="showDropdown = true"
+                @keydown="handleKeydown"
                 placeholder="Search by serial number..."
             />
             <div v-if="showDropdown && filteredOptions.length" class="border border-gray-300 rounded-md min-w-80 max-h-52 overflow-y-auto absolute bg-white">
                 <ul class="list-none p-0 m-0">
-                    <li class="p-2 cursor-pointer hover:bg-slate-400" v-for="option in filteredOptions" :key="option.id" @click="selectOption(option)">
+                    <li
+                        v-for="option in filteredOptions" 
+                        class="p-2 cursor-pointer hover:bg-slate-400" 
+                        :key="option.id" 
+                        @click="selectOption(option)"
+                    >
                         {{ option.serial_number }}
                     </li>
                 </ul>
