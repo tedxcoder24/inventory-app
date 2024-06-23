@@ -2,6 +2,10 @@
 defineProps({
     data: { type: Array },
 });
+
+const isPlural = num => Math.abs(num) !== 1;
+const simplePlural = word => `${word}s`;
+const pluralize = (num, word, plural = simplePlural) => isPlural(num) ? plural(word) : word;
 </script>
 
 <template>
@@ -9,7 +13,7 @@ defineProps({
         <div class="p-1">
             <div class="flex flex-col gap-6">
                 <div v-for="(item, dataId) in data" :key="dataId">
-                    <h2 class="font-semibold text-xl text-gray-800 leading-tight"> {{ item.itemType }} </h2>
+                    <h2 class="font-semibold text-xl text-gray-800 leading-tight"> {{ pluralize(0, item.itemType).toUpperCase() }} </h2>
 
                     <div class="flex flex-wrap justify-around gap-4 m-4">
                         <div v-for="(product, productId) in item.products" :key="productId">

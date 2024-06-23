@@ -2,14 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\ItemResource;
-use App\Models\Item;
-use App\Models\ItemChange;
-use App\Models\ItemStatus;
 use App\Models\ItemType;
-use App\Models\ItemWeight;
 use App\Models\Product;
-use App\Models\Status;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -22,7 +16,7 @@ class DashboardController extends Controller
 
         // Get all item types
         $itemTypes = ItemType::all();
-        
+
         foreach ($itemTypes as $itemType) {
             $itemTypeData = [
                 'itemType' => $itemType->item_type,
@@ -42,41 +36,47 @@ class DashboardController extends Controller
 
                 // Get items for the product and item type within the date range
                 $items = $product->items()
-                                ->where('item_type_id', $itemType->id)
-                                ->whereHas('statuses', function ($query) use ($from_date, $to_date) {
-                                    $query->whereBetween('date_time', [$from_date, $to_date]);
-                                })
-                                ->whereHas('weights', function ($query) use ($from_date, $to_date) {
-                                    $query->whereBetween('date_time', [$from_date, $to_date]);
-                                })
-                                ->get();
+                    ->where('item_type_id', $itemType->id)
+                    ->whereHas('statuses', function ($query) use ($from_date, $to_date) {
+                        $query->whereBetween('date_time', [$from_date, $to_date]);
+                    })
+                    ->whereHas('weights', function ($query) use ($from_date, $to_date) {
+                        $query->whereBetween('date_time', [$from_date, $to_date]);
+                    })
+                    ->get();
 
                 $statusAggregation = [];
 
                 foreach ($items as $item) {
-                    $firstStatus = $item->statuses()
-                                        ->whereBetween('date_time', [$from_date, $to_date])
-                                        ->oldest()
-                                        ->first();
+                    $statuses = $item->statuses()
+                        ->whereBetween('date_time', [$from_date, $to_date])
+                        ->get();
 
-                    $firstWeight = $item->weights()
-                                        ->whereBetween('date_time', [$from_date, $to_date])
-                                        ->oldest()
-                                        ->first();
+                    $weights = $item->weights()
+                        ->whereBetween('date_time', [$from_date, $to_date])
+                        ->get();
 
-                    if ($firstStatus && $firstWeight) {
-                        $statusName = $firstStatus->status->status;
-                        $grossWeight = $firstWeight->gross_weight;
+                    foreach ($statuses as $status) {
+                        $statusDateTime = Carbon::parse($status->date_time);
+                        foreach ($weights as $weight) {
+                            $weightDateTime = Carbon::parse($weight->date_time);
 
-                        // Aggregate status data
-                        if (!isset($statusAggregation[$statusName])) {
-                            $statusAggregation[$statusName] = [
-                                'status' => $statusName,
-                                'weight' => $grossWeight,
-                                'count' => 0
-                            ];
+                            // Ensure the status and weight have matching date times (or close to each other)
+                            if ($statusDateTime->isSameDay($weightDateTime)) {
+                                $statusName = $status->status->status;
+                                $grossWeight = $weight->gross_weight;
+
+                                // Aggregate status data
+                                if (!isset($statusAggregation[$statusName])) {
+                                    $statusAggregation[$statusName] = [
+                                        'status' => $statusName,
+                                        'weight' => $grossWeight,
+                                        'count' => 0
+                                    ];
+                                }
+                                $statusAggregation[$statusName]['count']++;
+                            }
                         }
-                        $statusAggregation[$statusName]['count']++;
                     }
                 }
 
@@ -111,7 +111,7 @@ class DashboardController extends Controller
 
         // Get all item types
         $itemTypes = ItemType::all();
-        
+
         foreach ($itemTypes as $itemType) {
             $itemTypeData = [
                 'itemType' => $itemType->item_type,
@@ -131,27 +131,27 @@ class DashboardController extends Controller
 
                 // Get items for the product and item type within the current week
                 $items = $product->items()
-                                ->where('item_type_id', $itemType->id)
-                                ->whereHas('statuses', function ($query) use ($startOfWeek, $endOfWeek) {
-                                    $query->whereBetween('date_time', [$startOfWeek, $endOfWeek]);
-                                })
-                                ->whereHas('weights', function ($query) use ($startOfWeek, $endOfWeek) {
-                                    $query->whereBetween('date_time', [$startOfWeek, $endOfWeek]);
-                                })
-                                ->get();
+                    ->where('item_type_id', $itemType->id)
+                    ->whereHas('statuses', function ($query) use ($startOfWeek, $endOfWeek) {
+                        $query->whereBetween('date_time', [$startOfWeek, $endOfWeek]);
+                    })
+                    ->whereHas('weights', function ($query) use ($startOfWeek, $endOfWeek) {
+                        $query->whereBetween('date_time', [$startOfWeek, $endOfWeek]);
+                    })
+                    ->get();
 
                 $statusAggregation = [];
 
                 foreach ($items as $item) {
                     $latestStatus = $item->statuses()
-                                        ->whereBetween('date_time', [$startOfWeek, $endOfWeek])
-                                        ->latest()
-                                        ->first();
+                        ->whereBetween('date_time', [$startOfWeek, $endOfWeek])
+                        ->latest()
+                        ->first();
 
                     $latestWeight = $item->weights()
-                                        ->whereBetween('date_time', [$startOfWeek, $endOfWeek])
-                                        ->latest()
-                                        ->first();
+                        ->whereBetween('date_time', [$startOfWeek, $endOfWeek])
+                        ->latest()
+                        ->first();
 
                     if ($latestStatus && $latestWeight) {
                         $statusName = $latestStatus->status->status;
@@ -169,19 +169,31 @@ class DashboardController extends Controller
                     }
                 }
 
-                // Convert aggregated status data to array format
-                foreach ($statusAggregation as $statusData) {
-                    $productData['statuses'][] = [
-                        'status' => $statusData['status'],
-                        'weight' => $statusData['weight'],
-                        'count' => $statusData['count']
-                    ];
+                // Convert aggregated status data to array format if not empty
+                if (!empty($statusAggregation)) {
+                    foreach ($statusAggregation as $statusData) {
+                        $productData['statuses'][] = [
+                            'status' => $statusData['status'],
+                            'weight' => $statusData['weight'],
+                            'count' => $statusData['count']
+                        ];
+                    }
+                    $itemTypeData['products'][] = $productData;
                 }
-
-                $itemTypeData['products'][] = $productData;
             }
 
-            $data[] = $itemTypeData;
+            // Add item type data only if it has products with statuses
+            if (!empty($itemTypeData['products'])) {
+                $data[] = $itemTypeData;
+            }
+        }
+
+        foreach ($data as &$item) {
+            foreach ($item['products'] as &$product) {
+                usort($product['statuses'], function ($a, $b) {
+                    return strcmp($a['status'], $b['status']);
+                });
+            }
         }
 
         return $data;
@@ -220,9 +232,9 @@ class DashboardController extends Controller
         return Inertia::render("Dashboard/Index", [
             'current_data' => $current_stats_data,
             'current_week_data' => $current_week_data,
-            'previous_week_data'=> $previous_week_data,
-            'current_month_data'=> $current_month_data,
-            'previous_month_data'=> $previous_month_data,
+            'previous_week_data' => $previous_week_data,
+            'current_month_data' => $current_month_data,
+            'previous_month_data' => $previous_month_data,
             'from_date' => $from_date,
             'to_date' => $to_date
         ]);
