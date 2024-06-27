@@ -16,19 +16,23 @@ class WeightUnitsTableSeeder extends Seeder
         DB::table('weight_units')->insert([
             [
                 'weight_unit' => 'Grams',
-                'abbreviation'=> 'g',
+                'abbreviation' => 'g',
+                'convert_to_grams' => 1,
             ],
             [
-                'weight_unit' => 'Kilograms', 
-                'abbreviation' => 'kg'
+                'weight_unit' => 'Kilograms',
+                'abbreviation' => 'kg',
+                'convert_to_grams' => 1000,
             ],
             [
-                'weight_unit' => 'Ounce', 
-                'abbreviation' => 'oz'
+                'weight_unit' => 'Ounce',
+                'abbreviation' => 'oz',
+                'convert_to_grams' => 28.3495,
             ],
             [
-                'weight_unit' => 'Pounds', 
-                'abbreviation' => 'lbs'
+                'weight_unit' => 'Pounds',
+                'abbreviation' => 'lbs',
+                'convert_to_grams' => 453.592,
             ],
         ]);
     }

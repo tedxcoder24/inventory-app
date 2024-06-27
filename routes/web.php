@@ -29,7 +29,7 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', [DashboardController::class,'index'])
+Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
@@ -37,15 +37,17 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    
+
     Route::resource('/items', ItemController::class);
-    Route::post('items/change-status', [ItemController::class, 'batchChangeStatus'])->name('item.batch-change-status');
-    Route::post('items/change-weight', [ItemController::class, 'batchChangeWeight'])->name('item.batch-change-weight');
+    Route::post('items/change-status', [ItemController::class, 'changeStatus'])->name('item.change-status');
+    Route::post('items/change-weight', [ItemController::class, 'changeWeight'])->name('item.change-weight');
+    Route::post('items/change-statuses', [ItemController::class, 'batchChangeStatus'])->name('item.batch-change-status');
+    Route::post('items/change-weights', [ItemController::class, 'batchChangeWeight'])->name('item.batch-change-weight');
 
     Route::resource('/attributes', AttributeController::class)->middleware('role:admin');
-    Route::post('/attributes/delete', [AttributeController::class,'delete'])->name('attributes.delete');
-    
+    Route::post('/attributes/delete', [AttributeController::class, 'delete'])->name('attributes.delete');
+
     Route::resource('/config', ConfigController::class)->middleware('role:admin');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

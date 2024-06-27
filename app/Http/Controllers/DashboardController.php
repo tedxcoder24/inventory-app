@@ -44,12 +44,6 @@ class DashboardController extends Controller
                 // Get items for the product and item type within the date range
                 $items = $product->items()
                     ->where('item_type_id', $itemType->id)
-                    // ->whereHas('statuses', function ($query) use ($from_date, $to_date) {
-                    //     $query->whereBetween('date_time', [$from_date, $to_date]);
-                    // })
-                    // ->whereHas('weights', function ($query) use ($from_date, $to_date) {
-                    //     $query->whereBetween('date_time', [$from_date, $to_date]);
-                    // })
                     ->get();
 
                 $statusAggregation = [];
@@ -86,26 +80,10 @@ class DashboardController extends Controller
                             }
                         }
                     }
-                    // if ($statuses->isNotEmpty() && $weights->isNotEmpty()) {
-                    //     $status = $statuses->first();
-                    //     $weight = $weights->first();
-
-                    //     $statusName = $status->status->status;
-                    //     $grossWeight = $weight->gross_weight;
-
-                    //     // Aggregate status data
-                    //     if (!isset($statusAggregation[$statusName])) {
-                    //         $statusAggregation[$statusName] = [
-                    //             'status' => $statusName,
-                    //             'weight' => $grossWeight
-                    //         ];
-                    //     }
-                    // }
                 }
 
                 // Increment count of items
                 $productData['count'] = $items->count();
-
 
                 // Convert aggregated status data to array format if not empty
                 if (!empty($statusAggregation)) {

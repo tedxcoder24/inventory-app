@@ -148,13 +148,17 @@ class ItemController extends Controller
             'statuses.status',
         ])->findOrFail($id);
 
-        $current_weight = $item->weights()->orderBy('date_time')->get();
+        $current_weight = $item->weights()->orderBy('date_time')->latest()->first();
+        $current_status = $item->statuses()->orderBy('date_time')->with(['status'])->latest()->first();
         $weight_unit = ItemType::findOrFail($item->item_type_id)->weightUnit()->first();
 
         return Inertia::render('Items/Show', [
             'item' => $item,
             'currentWeight' => $current_weight,
+            'currentStatus' => $current_status,
             'weightUnit' => $weight_unit,
+            'statuses' => StatusResource::collection(Status::where('enabled', true)->get()),
+            'operators' => OperatorResource::collection(Operator::where('enabled', true)->get()),
         ]);
     }
 
@@ -189,6 +193,8 @@ class ItemController extends Controller
         $validated_data = $request->validated();
         $formatted_date = Carbon::parse($validated_data['date_time'])->format('Y-m-d H:i:s');
 
+        $item = Item::findOrFail($id);
+
         $item_data = [
             'operator_id' => $validated_data['operator_id'],
             'date_time' => $formatted_date,
@@ -210,23 +216,23 @@ class ItemController extends Controller
         if ($validated_data['clarity_id'] !== null) $item_data['clarity_id'] = $validated_data['clarity_id'];
         if ($validated_data['appearance_id'] !== null) $item_data['appearance_id'] = $validated_data['appearance_id'];
 
-        Item::findOrFail($id)->update($item_data);
+        $item->update($item_data);
 
-        ItemStatus::create([
-            'date_time' => $formatted_date,
-            'operator_id' => $validated_data['operator_id'],
-            'item_id' => $id,
-            'status_id' => $validated_data['status_id'],
-            'note' => $request->note,
-        ]);
+        // ItemStatus::create([
+        //     'date_time' => $formatted_date,
+        //     'operator_id' => $validated_data['operator_id'],
+        //     'item_id' => $id,
+        //     'status_id' => $validated_data['status_id'],
+        //     'note' => $request->note,
+        // ]);
 
-        ItemWeight::create([
-            'date_time' => $formatted_date,
-            'operator_id' => $validated_data['operator_id'],
-            'item_id' => $id,
-            'gross_weight' => $validated_data['gross_weight'],
-            'note' => $request->note,
-        ]);
+        // ItemWeight::create([
+        //     'date_time' => $formatted_date,
+        //     'operator_id' => $validated_data['operator_id'],
+        //     'item_id' => $id,
+        //     'gross_weight' => $validated_data['gross_weight'],
+        //     'note' => $request->note,
+        // ]);
 
         return redirect('/items')->with('success', 'Item has been updated!');
     }
@@ -239,6 +245,65 @@ class ItemController extends Controller
         $item->delete();
 
         return back()->with('delete', 'Item has been deleted!');
+    }
+
+    public function changeStatus(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|exists:items,id',
+            'operator_id' => 'required|exists:operators,id',
+            'status_id' => 'required|exists:statuses,id',
+            'date_time' => 'required|date',
+            'note' => 'nullable|string|max:255',
+        ]);
+
+        $item = Item::findOrFail($request->id);
+        $formatted_date = Carbon::parse($request->date_time)->format('Y-m-d H:i:s');
+
+        $item->update([
+            'date_time' => $formatted_date,
+            'operator_id' => $request->operator_id,
+        ]);
+
+        ItemStatus::create([
+            'date_time' => $formatted_date,
+            'operator_id' => $request->operator_id,
+            'item_id' => $item->id,
+            'status_id' => $request->status_id,
+            'note' => $request->note,
+        ]);
+
+        return back()->with('success', 'Status has been changed!');
+    }
+
+    public function changeWeight(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|exists:items,id',
+            'operator_id' => 'required|exists:operators,id',
+            'gross_weight' => 'required|numeric|min:0',
+            'date_time' => 'required|date',
+            'note' => 'nullable|string|max:255',
+        ]);
+
+        $item = Item::findOrFail($request->id);
+        $formatted_date = Carbon::parse($request->date_time)->format('Y-m-d H:i:s');
+
+        $item->update([
+            'date_time' => $formatted_date,
+            'operator_id' => $request->operator_id,
+            'gross_weight' => $request->gross_weight,
+        ]);
+
+        ItemWeight::create([
+            'date_time' => $formatted_date,
+            'operator_id' => $request->operator_id,
+            'item_id' => $item->id,
+            'gross_weight' => $request->gross_weight,
+            'note' => $request->note,
+        ]);
+
+        return back()->with('success', 'Weight has been changed!');
     }
 
     public function batchChangeStatus(Request $request)

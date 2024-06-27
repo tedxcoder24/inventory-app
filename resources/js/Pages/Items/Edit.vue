@@ -115,6 +115,7 @@ const cancel = () => {
                                         v-model="form.status_id"
                                         class="mt-1 block w-full"
                                         required
+                                        disabled
                                     />
                                 </div>
                             </div>
@@ -172,18 +173,19 @@ const cancel = () => {
 
                             <div class="flex gap-6">
                                 <div class="w-1/2">
-                                    <InputLabel for="tare_weight" :value="`Tare Weight (${itemTypes.data[form.item_type_id - 1] ? itemTypes.data[form.item_type_id - 1]?.weight_unit.abbreviation : ''})`" />
-        
+                                    <InputLabel for="tare_weight" value="Tare Weight (g)" />
+
                                     <div class="flex gap-4">
                                         <TextInput
                                             id="tare_weight"
                                             type="number"
                                             class="mt-1 block w-full"
                                             v-model="form.tare_weight"
+                                            disabled
                                             required
                                         />
 
-                                        <PrimaryButton>Get tare weight</PrimaryButton>
+                                        <!-- <PrimaryButton>Get tare weight</PrimaryButton> -->
                                     </div>
                                 </div>
     
@@ -196,10 +198,11 @@ const cancel = () => {
                                             type="number"
                                             class="mt-1 block w-full"
                                             v-model="form.gross_weight"
+                                            disabled
                                             required
                                         />
 
-                                        <PrimaryButton>Get gross weight</PrimaryButton>
+                                        <!-- <PrimaryButton>Get gross weight</PrimaryButton> -->
                                     </div>
                                 </div>
                             </div>
