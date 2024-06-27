@@ -28,7 +28,6 @@ use App\Models\Clarity;
 use App\Models\Appearance;
 use App\Models\Status;
 use App\Models\Config;
-use App\Models\ItemChange;
 use App\Models\ItemStatus;
 use App\Models\ItemWeight;
 
@@ -59,15 +58,15 @@ class ItemController extends Controller
     public function create()
     {
         return Inertia::render('Items/Create', [
-            'operators' => OperatorResource::collection(Operator::where('enabled', true)->get()),
-            'itemTypes' => ItemTypeResource::collection(ItemType::where('enabled', true)->get()),
+            'operators' => OperatorResource::collection(Operator::where('enabled', true)->orderBy('operator')->get()),
+            'itemTypes' => ItemTypeResource::collection(ItemType::where('enabled', true)->orderBy('item_type')->get()),
             'weightUnits' => WeightUnitResource::collection(WeightUnit::all()),
-            'strains' => StrainResource::collection(Strain::where('enabled', true)->get()),
-            'products' => ProductResource::collection(Product::where('enabled', true)->get()),
-            'colors' => ColorResource::collection(Color::where('enabled', true)->get()),
-            'clarities' => ClarityResource::collection(Clarity::where('enabled', true)->get()),
-            'appearances' => AppearanceResource::collection(Appearance::where('enabled', true)->get()),
-            'statuses' => StatusResource::collection(Status::where('enabled', true)->get()),
+            'strains' => StrainResource::collection(Strain::where('enabled', true)->orderBy('strain')->get()),
+            'products' => ProductResource::collection(Product::where('enabled', true)->orderBy('product')->get()),
+            'colors' => ColorResource::collection(Color::where('enabled', true)->orderBy('color')->get()),
+            'clarities' => ClarityResource::collection(Clarity::where('enabled', true)->orderBy('clarity')->get()),
+            'appearances' => AppearanceResource::collection(Appearance::where('enabled', true)->orderBy('appearance')->get()),
+            'statuses' => StatusResource::collection(Status::where('enabled', true)->orderBy('status')->get()),
         ]);
     }
 
@@ -85,7 +84,7 @@ class ItemController extends Controller
         // Save the new serial number back to the database
         $config->last_serial_number = $new_serial_number;
         $config->save();
-        
+
         $formatted_date = Carbon::parse($validated_data['date_time'])->format('Y-m-d H:i:s');
 
         $item_data = [
@@ -93,15 +92,15 @@ class ItemController extends Controller
             'date_time' => $formatted_date,
             'serial_number' => $new_serial_number,
             'item_type_id' => $validated_data['item_type_id'],
-            'batch_id'=> '',
-            'metrc_id'=> '',
+            'batch_id' => '',
+            'metrc_id' => '',
             'tare_weight' => $validated_data['tare_weight'],
             'gross_weight' => $validated_data['gross_weight'],
             'strain_id' => $validated_data['strain_id'],
             'product_id' => $validated_data['product_id'],
-            'color_id'=> 1,
-            'clarity_id'=> 1,
-            'appearance_id'=> 1,
+            'color_id' => 1,
+            'clarity_id' => 1,
+            'appearance_id' => 1,
         ];
 
         if ($validated_data['batch_id'] !== null) $item_data['batch_id'] = $validated_data['batch_id'];
@@ -109,6 +108,7 @@ class ItemController extends Controller
         if ($validated_data['color_id'] !== null) $item_data['color_id'] = $validated_data['color_id'];
         if ($validated_data['clarity_id'] !== null) $item_data['clarity_id'] = $validated_data['clarity_id'];
         if ($validated_data['appearance_id'] !== null) $item_data['appearance_id'] = $validated_data['appearance_id'];
+
         $item = Item::create($item_data);
 
         ItemStatus::create([
@@ -123,7 +123,7 @@ class ItemController extends Controller
             'date_time' => $formatted_date,
             'operator_id' => $validated_data['operator_id'],
             'item_id' => $item->id,
-            'gross_weight'=> $validated_data['gross_weight'],
+            'gross_weight' => $validated_data['gross_weight'],
             'note' => $request->note,
         ]);
 
@@ -136,25 +136,29 @@ class ItemController extends Controller
     public function show(string $id)
     {
         $item = Item::with([
-            'operator', 
-            'itemType', 
-            'strain', 
-            'product', 
-            'color', 
-            'clarity', 
-            'appearance', 
+            'operator',
+            'itemType',
+            'strain',
+            'product',
+            'color',
+            'clarity',
+            'appearance',
             'weights.operator',
             'statuses.operator',
             'statuses.status',
         ])->findOrFail($id);
 
-        $current_weight = $item->weights()->orderBy('date_time')->get();
+        $current_weight = $item->weights()->orderBy('date_time')->latest()->first();
+        $current_status = $item->statuses()->orderBy('date_time')->with(['status'])->latest()->first();
         $weight_unit = ItemType::findOrFail($item->item_type_id)->weightUnit()->first();
 
         return Inertia::render('Items/Show', [
             'item' => $item,
             'currentWeight' => $current_weight,
+            'currentStatus' => $current_status,
             'weightUnit' => $weight_unit,
+            'statuses' => StatusResource::collection(Status::where('enabled', true)->get()),
+            'operators' => OperatorResource::collection(Operator::where('enabled', true)->get()),
         ]);
     }
 
@@ -170,7 +174,7 @@ class ItemController extends Controller
             'item' => $item,
             'currentStatus' => $current_status,
             'currentWeight' => $current_weight,
-            'statuses'=> StatusResource::collection(Status::where('enabled', true)->get()),
+            'statuses' => StatusResource::collection(Status::where('enabled', true)->get()),
             'operators' => OperatorResource::collection(Operator::where('enabled', true)->get()),
             'itemTypes' => ItemTypeResource::collection(ItemType::where('enabled', true)->get()),
             'strains' => StrainResource::collection(Strain::where('enabled', true)->get()),
@@ -188,6 +192,8 @@ class ItemController extends Controller
     {
         $validated_data = $request->validated();
         $formatted_date = Carbon::parse($validated_data['date_time'])->format('Y-m-d H:i:s');
+
+        $item = Item::findOrFail($id);
 
         $item_data = [
             'operator_id' => $validated_data['operator_id'],
@@ -210,23 +216,23 @@ class ItemController extends Controller
         if ($validated_data['clarity_id'] !== null) $item_data['clarity_id'] = $validated_data['clarity_id'];
         if ($validated_data['appearance_id'] !== null) $item_data['appearance_id'] = $validated_data['appearance_id'];
 
-        Item::findOrFail($id)->update($item_data);
+        $item->update($item_data);
 
-        ItemStatus::create([
-            'date_time' => $formatted_date,
-            'operator_id' => $validated_data['operator_id'],
-            'item_id' => $id,
-            'status_id' => $validated_data['status_id'],
-            'note' => $request->note,
-        ]);
+        // ItemStatus::create([
+        //     'date_time' => $formatted_date,
+        //     'operator_id' => $validated_data['operator_id'],
+        //     'item_id' => $id,
+        //     'status_id' => $validated_data['status_id'],
+        //     'note' => $request->note,
+        // ]);
 
-        ItemWeight::create([
-            'date_time' => $formatted_date,
-            'operator_id' => $validated_data['operator_id'],
-            'item_id' => $id,
-            'gross_weight'=> $validated_data['gross_weight'],
-            'note' => $request->note,
-        ]);
+        // ItemWeight::create([
+        //     'date_time' => $formatted_date,
+        //     'operator_id' => $validated_data['operator_id'],
+        //     'item_id' => $id,
+        //     'gross_weight' => $validated_data['gross_weight'],
+        //     'note' => $request->note,
+        // ]);
 
         return redirect('/items')->with('success', 'Item has been updated!');
     }
@@ -239,6 +245,65 @@ class ItemController extends Controller
         $item->delete();
 
         return back()->with('delete', 'Item has been deleted!');
+    }
+
+    public function changeStatus(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|exists:items,id',
+            'operator_id' => 'required|exists:operators,id',
+            'status_id' => 'required|exists:statuses,id',
+            'date_time' => 'required|date',
+            'note' => 'nullable|string|max:255',
+        ]);
+
+        $item = Item::findOrFail($request->id);
+        $formatted_date = Carbon::parse($request->date_time)->format('Y-m-d H:i:s');
+
+        $item->update([
+            'date_time' => $formatted_date,
+            'operator_id' => $request->operator_id,
+        ]);
+
+        ItemStatus::create([
+            'date_time' => $formatted_date,
+            'operator_id' => $request->operator_id,
+            'item_id' => $item->id,
+            'status_id' => $request->status_id,
+            'note' => $request->note,
+        ]);
+
+        return back()->with('success', 'Status has been changed!');
+    }
+
+    public function changeWeight(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|exists:items,id',
+            'operator_id' => 'required|exists:operators,id',
+            'gross_weight' => 'required|numeric|min:0',
+            'date_time' => 'required|date',
+            'note' => 'nullable|string|max:255',
+        ]);
+
+        $item = Item::findOrFail($request->id);
+        $formatted_date = Carbon::parse($request->date_time)->format('Y-m-d H:i:s');
+
+        $item->update([
+            'date_time' => $formatted_date,
+            'operator_id' => $request->operator_id,
+            'gross_weight' => $request->gross_weight,
+        ]);
+
+        ItemWeight::create([
+            'date_time' => $formatted_date,
+            'operator_id' => $request->operator_id,
+            'item_id' => $item->id,
+            'gross_weight' => $request->gross_weight,
+            'note' => $request->note,
+        ]);
+
+        return back()->with('success', 'Weight has been changed!');
     }
 
     public function batchChangeStatus(Request $request)

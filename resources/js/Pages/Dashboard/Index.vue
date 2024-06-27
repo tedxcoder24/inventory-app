@@ -150,7 +150,14 @@ const getAttributeKeys = (item) => {
                                         <h2 class="font-semibold text-center text-xl text-gray-700 leading-tight"> CURRENT INVENTORY </h2>
                                     </div>
 
-                                    <StatsSection :data="current_data" />
+                                    <div v-if="current_data.length === 0">
+                                        <div class="flex justify-center items-center p-8">
+                                            <span class="font-semibold text-center text-lg"> No Data </span>
+                                        </div>
+                                    </div>
+                                    <div v-else>
+                                        <StatsSection :data="current_data" />
+                                    </div>
                                 </div>
 
                                 <div class="flex flex-col w-1/2 bg-gray-100">
@@ -163,7 +170,14 @@ const getAttributeKeys = (item) => {
                                             <h2 class="text-center text-base text-gray-700 leading-tight"> Current Week: {{ getCurrentWeekDates().start }} - {{ getCurrentWeekDates().end }} </h2>
                                         </div>
 
-                                        <StatsSection :data="current_week_data" />
+                                        <div v-if="current_week_data.length === 0">
+                                            <div class="flex justify-center items-center p-8">
+                                                <span class="font-semibold text-center text-lg"> No Data </span>
+                                            </div>
+                                        </div>
+                                        <div v-else>
+                                            <StatsSection :data="current_week_data" />
+                                        </div>
                                     </div>
 
                                     <div class="flex flex-col">
@@ -171,7 +185,14 @@ const getAttributeKeys = (item) => {
                                             <h2 class="text-center text-base text-gray-700 leading-tight"> Previous Week: {{ getPreviousWeekDates().start }} - {{ getPreviousWeekDates().end }} </h2>
                                         </div>
 
-                                        <StatsSection :data="previous_week_data" />
+                                        <div v-if="previous_week_data.length === 0">
+                                            <div class="flex justify-center items-center p-8">
+                                                <span class="font-semibold text-center text-lg"> No Data </span>
+                                            </div>
+                                        </div>
+                                        <div v-else>
+                                            <StatsSection :data="previous_week_data" />
+                                        </div>
                                     </div>
 
                                     <div class="flex flex-col">
@@ -179,7 +200,14 @@ const getAttributeKeys = (item) => {
                                             <h2 class="text-center text-base text-gray-700 leading-tight"> Current Month: {{ getCurrentMonthDates().start }} - {{ getCurrentMonthDates().end }} </h2>
                                         </div>
 
-                                        <StatsSection :data="current_month_data" />
+                                        <div v-if="current_month_data.length === 0">
+                                            <div class="flex justify-center items-center p-8">
+                                                <span class="font-semibold text-center text-lg"> No Data </span>
+                                            </div>
+                                        </div>
+                                        <div v-else>
+                                            <StatsSection :data="current_month_data" />
+                                        </div>
                                     </div>
 
                                     <div class="flex flex-col">
@@ -187,7 +215,14 @@ const getAttributeKeys = (item) => {
                                             <h2 class="text-center text-base text-gray-700 leading-tight"> Previous Month: {{ getPreviousMonthDates().start }} - {{ getPreviousMonthDates().end }} </h2>
                                         </div>
 
-                                        <StatsSection :data="previous_month_data" />
+                                        <div v-if="previous_month_data.length === 0">
+                                            <div class="flex justify-center items-center p-8">
+                                                <span class="font-semibold text-center text-lg"> No Data </span>
+                                            </div>
+                                        </div>
+                                        <div v-else>
+                                            <StatsSection :data="previous_month_data" />
+                                        </div>
                                     </div>
                                 </div>
                             </div>

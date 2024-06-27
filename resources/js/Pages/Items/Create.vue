@@ -165,13 +165,6 @@ const cancel = () => {
                                 <div class="w-1/2">
                                     <InputLabel for="strain" value="Strain *" />
         
-                                    <!-- <Select
-                                        id="strain"
-                                        :options="strains.data"
-                                        v-model="form.strain_id"
-                                        class="mt-1 block w-full"
-                                        required
-                                    /> -->
                                     <StrainSelectForm 
                                         id="strain"
                                         :options="strains.data"
@@ -197,12 +190,13 @@ const cancel = () => {
 
                             <div class="flex gap-6">
                                 <div class="w-1/2">
-                                    <InputLabel for="tare_weight" :value="`Tare Weight (${itemTypes.data[form.item_type_id - 1] ? itemTypes.data[form.item_type_id - 1]?.weight_unit.abbreviation : ''})`" />
+                                    <InputLabel for="tare_weight" value="Tare Weight (g)" />
         
                                     <div class="flex gap-4">
                                         <TextInput
                                             id="tare_weight"
                                             type="number"
+                                            step="0.01"
                                             class="mt-1 block w-full"
                                             v-model="form.tare_weight"
                                             required
@@ -219,6 +213,7 @@ const cancel = () => {
                                         <TextInput
                                             id="gross_weight"
                                             type="number"
+                                            step="0.01"
                                             class="mt-1 block w-full"
                                             v-model="form.gross_weight"
                                             required

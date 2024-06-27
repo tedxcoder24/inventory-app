@@ -294,7 +294,7 @@ const handleSearchedItems = (items) => {
                                             <div class="flex items-center justify-center">
                                                 <div>
                                                     <div class="text-sm font-medium text-gray-900">
-                                                        {{ item.tare_weight }} ({{ item.weight_unit }})
+                                                        {{ item.tare_weight.toFixed(2) }} (g)
                                                     </div>
                                                 </div>
                                             </div>
@@ -303,7 +303,7 @@ const handleSearchedItems = (items) => {
                                             <div class="flex items-center justify-center">
                                                 <div>
                                                     <div class="text-sm font-medium text-gray-900">
-                                                        {{ item.gross_weight }} ({{ item.weight_unit }})
+                                                        {{ item.gross_weight.toFixed(2) }} ({{ item.weight_unit }})
                                                     </div>
                                                 </div>
                                             </div>
@@ -312,7 +312,7 @@ const handleSearchedItems = (items) => {
                                             <div class="flex items-center justify-center">
                                                 <div>
                                                     <div class="text-sm font-medium text-gray-900">
-                                                        {{ item.gross_weight - item.tare_weight }} ({{ item.weight_unit }})
+                                                        {{ (item.gross_weight - (item.tare_weight / item.convert_to_grams)).toFixed(2) }} ({{ item.weight_unit }})
                                                     </div>
                                                 </div>
                                             </div>

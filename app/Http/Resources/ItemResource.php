@@ -32,6 +32,7 @@ class ItemResource extends JsonResource
             'serial_number' => $this->serial_number,
             'item_type' => ItemType::where('id', $this->item_type_id)->first()->item_type,
             'weight_unit' => ItemType::where('id', $this->item_type_id)->first()->weightUnit->abbreviation,
+            'convert_to_grams' => ItemType::where('id', $this->item_type_id)->first()->weightUnit->convert_to_grams,
             'batch_id' => $this->batch_id,
             'metrc_id' => $this->metrc_id,
             'tare_weight' => $this->tare_weight,
@@ -39,8 +40,8 @@ class ItemResource extends JsonResource
             'strain' => Strain::where('id', $this->strain_id)->first()->strain,
             'product' => Product::where('id', $this->product_id)->first()->product,
             'color' => Color::where('id', $this->color_id)->first()->color,
-            'clarity'=> Clarity::where('id', $this->clarity_id)->first()->clarity,
-            'appearance'=> Appearance::where('id', $this->appearance_id)->first()->appearance,
+            'clarity' => Clarity::where('id', $this->clarity_id)->first()->clarity,
+            'appearance' => Appearance::where('id', $this->appearance_id)->first()->appearance,
         ];
     }
 }
