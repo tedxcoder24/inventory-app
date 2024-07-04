@@ -6,6 +6,7 @@ use App\Models\ItemType;
 use App\Models\Product;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class DashboardController extends Controller
@@ -332,16 +333,16 @@ class DashboardController extends Controller
                 $items = $product->items()
                     ->where('item_type_id', $itemType->id)
                     ->whereHas('statuses', function ($query) {
-                        $query->where('status_id', function ($query) {
-                            $query->select('id')
-                                ->from('statuses')
-                                ->where('status', '!=', 'IN')
-                                ->orderByDesc('date_time')
-                                ->limit(1);
+                        $query->whereIn('id', function ($subQuery) {
+                            $subQuery->select(DB::raw('MAX(id)'))
+                                ->from('item_statuses')
+                                ->groupBy('item_id')
+                                ->havingRaw('MAX(status_id) != (SELECT id FROM statuses WHERE status = "IN" LIMIT 1)');
                         });
                     })
                     ->get();
 
+                // dd($items);
                 $statusAggregation = [];
 
                 foreach ($items as $item) {
@@ -541,28 +542,6 @@ class DashboardController extends Controller
 
         $from_date = isset($from_date_time) ? Carbon::parse($from_date_time) : Carbon::now()->startOfWeek();
         $to_date = isset($to_date_time) ? Carbon::parse($to_date_time) : Carbon::now()->endOfWeek();
-
-        // Current week
-        $current_week_start = Carbon::now()->startOfWeek();
-        $current_week_end = Carbon::now()->endOfWeek();
-
-        // Previous week
-        $previous_week_start = Carbon::now()->subWeek()->startOfWeek();
-        $previous_week_end = Carbon::now()->subWeek()->endOfWeek();
-
-        // Current month
-        $current_month_start = Carbon::now()->startOfMonth();
-        $current_month_end = Carbon::now()->endOfMonth();
-
-        // Previous month
-        $previous_month_start = Carbon::now()->subMonth()->startOfMonth();
-        $previous_month_end = Carbon::now()->subMonth()->endOfMonth();
-
-        $current_stats_data = $this->getCurrentStats();
-        // $current_week_data = $this->getInventoryStats($current_week_start, $current_week_end);
-        // $previous_week_data = $this->getInventoryStats($previous_week_start, $previous_week_end);
-        // $current_month_data = $this->getInventoryStats($current_month_start, $current_month_end);
-        // $previous_month_data = $this->getInventoryStats($previous_month_start, $previous_month_end);
 
         $current_inventory = $this->getCurrentInventory();
         $historical_stats = $this->getHistoricalStats();
