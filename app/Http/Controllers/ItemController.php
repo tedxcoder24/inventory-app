@@ -174,14 +174,14 @@ class ItemController extends Controller
             'item' => $item,
             'currentStatus' => $current_status,
             'currentWeight' => $current_weight,
-            'statuses' => StatusResource::collection(Status::where('enabled', true)->get()),
-            'operators' => OperatorResource::collection(Operator::where('enabled', true)->get()),
-            'itemTypes' => ItemTypeResource::collection(ItemType::where('enabled', true)->get()),
-            'strains' => StrainResource::collection(Strain::where('enabled', true)->get()),
-            'products' => ProductResource::collection(Product::where('enabled', true)->get()),
-            'colors' => ColorResource::collection(Color::where('enabled', true)->get()),
-            'clarities' => ClarityResource::collection(Clarity::where('enabled', true)->get()),
-            'appearances' => AppearanceResource::collection(Appearance::where('enabled', true)->get()),
+            'statuses' => StatusResource::collection(Status::where('enabled', true)->orderBy('status')->get()),
+            'operators' => OperatorResource::collection(Operator::where('enabled', true)->orderBy('operator')->get()),
+            'itemTypes' => ItemTypeResource::collection(ItemType::where('enabled', true)->orderBy('item_type')->get()),
+            'strains' => StrainResource::collection(Strain::where('enabled', true)->orderBy('strain')->get()),
+            'products' => ProductResource::collection(Product::where('enabled', true)->orderBy('product')->get()),
+            'colors' => ColorResource::collection(Color::where('enabled', true)->orderBy('color')->get()),
+            'clarities' => ClarityResource::collection(Clarity::where('enabled', true)->orderBy('clarity')->get()),
+            'appearances' => AppearanceResource::collection(Appearance::where('enabled', true)->orderBy('appearance')->get()),
         ]);
     }
 

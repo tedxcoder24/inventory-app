@@ -190,7 +190,7 @@ const cancel = () => {
                                 </div>
     
                                 <div class="w-1/2">
-                                    <InputLabel for="gross_weight" :value="`Gross Weight (${itemTypes.data[form.item_type_id - 1] ? itemTypes.data[form.item_type_id - 1]?.weight_unit.abbreviation : ''})`" />
+                                    <InputLabel for="gross_weight" :value="`Gross Weight (${itemTypes.data[form.item_type_id - 1] ? itemTypes.data.filter(v => v.value === Number(form.item_type_id))[0].weight_unit.abbreviation : ''}) *`" />
         
                                     <div class="flex gap-4">
                                         <TextInput
