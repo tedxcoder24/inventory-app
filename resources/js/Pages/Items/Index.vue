@@ -303,7 +303,6 @@ const handleSearchedItems = (items) => {
                                             <div class="flex items-center justify-center">
                                                 <div>
                                                     <div class="text-sm font-medium text-gray-900">
-                                                        {{ item }}
                                                         {{ item.gross_weight.toFixed(2) }} ({{ item.weight_unit }})
                                                     </div>
                                                 </div>

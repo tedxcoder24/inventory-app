@@ -161,7 +161,7 @@ const updateItemsWeight = () => {
                                         </div>
                                         <div class="text-lg font-medium text-gray-900"> 
                                             <label class="text-base font-medium text-gray-500"> Gross Weight: </label>
-                                            {{ currentWeight }} ({{ weightUnit.abbreviation }})
+                                            {{ currentWeight.gross_weight }} ({{ weightUnit.abbreviation }})
                                         </div>
                                         <div class="text-lg font-medium text-gray-900"> 
                                             <label class="text-base font-medium text-gray-500"> Current Net Weight: </label>

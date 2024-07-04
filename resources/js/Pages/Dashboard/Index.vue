@@ -5,6 +5,9 @@ import StatsSection from './Partials/StatsSection.vue';
 
 const props = defineProps({
     current_data: { type: Array },
+    historical_stats: { type: Array },
+    today_data: { type: Array },
+    yesterday_data: { type: Array },
     current_week_data: { type: Array },
     previous_week_data: { type: Array },
     current_month_data: { type: Array },
@@ -16,6 +19,17 @@ const props = defineProps({
 function formatDate(date) {
     const options = { month: '2-digit', day: '2-digit', year: '2-digit' };
     return date.toLocaleDateString('en-US', options);
+}
+
+function getTodayDate() {
+    const today = new Date();
+    return formatDate(today);
+}
+
+function getYesterdayDate() {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    return formatDate(yesterday);
 }
 
 function getCurrentWeekDates() {
@@ -158,11 +172,54 @@ const getAttributeKeys = (item) => {
                                     <div v-else>
                                         <StatsSection :data="current_data" />
                                     </div>
+
+                                    <div class="flex justify-center items-center p-4 bg-emerald-200">
+                                        <h2 class="font-semibold text-center text-xl text-gray-700 leading-tight"> HISTORICAL STATS </h2>
+                                    </div>
+
+                                    <div v-if="historical_stats.length === 0">
+                                        <div class="flex justify-center items-center p-8">
+                                            <span class="font-semibold text-center text-lg"> No Data </span>
+                                        </div>
+                                    </div>
+                                    <div v-else>
+                                        <StatsSection :data="historical_stats" />
+                                    </div>
                                 </div>
 
                                 <div class="flex flex-col w-1/2 bg-gray-100">
                                     <div class="flex justify-center items-center p-4 bg-orange-200">
                                         <h2 class="font-semibold text-center text-xl text-gray-700 leading-tight"> INVENTORY STATS </h2>
+                                    </div>
+
+                                    <div class="flex flex-col">
+                                        <div class="flex justify-center items-center p-2 bg-red-100">
+                                            <h2 class="text-center text-base text-gray-700 leading-tight"> Today: {{ getTodayDate() }} </h2>
+                                        </div>
+
+                                        <div v-if="today_data.length === 0">
+                                            <div class="flex justify-center items-center p-8">
+                                                <span class="font-semibold text-center text-lg"> No Data </span>
+                                            </div>
+                                        </div>
+                                        <div v-else>
+                                            <StatsSection :data="today_data" />
+                                        </div>
+                                    </div>
+
+                                    <div class="flex flex-col">
+                                        <div class="flex justify-center items-center p-2 bg-red-100">
+                                            <h2 class="text-center text-base text-gray-700 leading-tight"> Yesterday: {{ getYesterdayDate() }} </h2>
+                                        </div>
+
+                                        <div v-if="yesterday_data.length === 0">
+                                            <div class="flex justify-center items-center p-8">
+                                                <span class="font-semibold text-center text-lg"> No Data </span>
+                                            </div>
+                                        </div>
+                                        <div v-else>
+                                            <StatsSection :data="yesterday_data" />
+                                        </div>
                                     </div>
 
                                     <div class="flex flex-col">

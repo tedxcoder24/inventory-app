@@ -212,6 +212,328 @@ class DashboardController extends Controller
         return $data;
     }
 
+    public function getCurrentInventory()
+    {
+        $data = [];
+
+        // Get all item types
+        $itemTypes = ItemType::all();
+
+        foreach ($itemTypes as $itemType) {
+            $itemTypeData = [
+                'itemType' => $itemType->item_type,
+                'products' => []
+            ];
+
+            // Get all products associated with this item type
+            $products = Product::whereHas('items', function ($query) use ($itemType) {
+                $query->where('item_type_id', $itemType->id);
+            })->get();
+
+            foreach ($products as $product) {
+                $productData = [
+                    'product' => $product->product,
+                    'count' => 0,
+                    'statuses' => []
+                ];
+
+                // Get items for the product and item type where the last status is "IN"
+                $items = $product->items()
+                    ->where('item_type_id', $itemType->id)
+                    ->whereHas('statuses', function ($query) {
+                        $query->where('status_id', function ($query) {
+                            $query->select('id')
+                                ->from('statuses')
+                                ->where('status', 'IN')
+                                ->orderByDesc('date_time')
+                                ->limit(1);
+                        });
+                    })
+                    ->get();
+
+                $statusAggregation = [];
+
+                foreach ($items as $item) {
+                    $latestStatus = $item->statuses()
+                        ->latest()
+                        ->first();
+
+                    $latestWeight = $item->weights()
+                        ->latest()
+                        ->first();
+
+                    if ($latestStatus && $latestWeight && $latestStatus->status->status === 'IN') {
+                        $statusName = $latestStatus->status->status;
+                        $grossWeight = $latestWeight->gross_weight;
+
+                        // Aggregate status data
+                        if (!isset($statusAggregation[$statusName])) {
+                            $statusAggregation[$statusName] = [
+                                'status' => $statusName,
+                                'weight' => 0,
+                                'count' => 0
+                            ];
+                        }
+                        $statusAggregation[$statusName]['weight'] += $grossWeight;
+                        $statusAggregation[$statusName]['count']++;
+                    }
+                }
+
+                // Increment count of items
+                $productData['count'] = $items->count();
+
+                // Convert aggregated status data to array format if not empty
+                if (!empty($statusAggregation)) {
+                    foreach ($statusAggregation as $statusData) {
+                        $productData['statuses'][] = [
+                            'status' => $statusData['status'],
+                            'weight' => $statusData['weight']
+                        ];
+                    }
+                    $itemTypeData['products'][] = $productData;
+                }
+            }
+
+            // Add item type data only if it has products with statuses
+            if (!empty($itemTypeData['products'])) {
+                $data[] = $itemTypeData;
+            }
+        }
+
+        return $data;
+    }
+
+    public function getHistoricalStats()
+    {
+        $data = [];
+
+        // Get all item types
+        $itemTypes = ItemType::all();
+
+        foreach ($itemTypes as $itemType) {
+            $itemTypeData = [
+                'itemType' => $itemType->item_type,
+                'products' => []
+            ];
+
+            // Get all products associated with this item type
+            $products = Product::whereHas('items', function ($query) use ($itemType) {
+                $query->where('item_type_id', $itemType->id);
+            })->get();
+
+            foreach ($products as $product) {
+                $productData = [
+                    'product' => $product->product,
+                    'count' => 0,
+                    'statuses' => []
+                ];
+
+                // Get items for the product and item type where the last status is not "IN"
+                $items = $product->items()
+                    ->where('item_type_id', $itemType->id)
+                    ->whereHas('statuses', function ($query) {
+                        $query->where('status_id', function ($query) {
+                            $query->select('id')
+                                ->from('statuses')
+                                ->where('status', '!=', 'IN')
+                                ->orderByDesc('date_time')
+                                ->limit(1);
+                        });
+                    })
+                    ->get();
+
+                $statusAggregation = [];
+
+                foreach ($items as $item) {
+                    $latestStatus = $item->statuses()
+                        ->latest()
+                        ->first();
+
+                    $latestWeight = $item->weights()
+                        ->latest()
+                        ->first();
+
+                    if ($latestStatus && $latestWeight && $latestStatus->status->status !== 'IN') {
+                        $statusName = $latestStatus->status->status;
+                        $grossWeight = $latestWeight->gross_weight;
+
+                        // Aggregate status data
+                        if (!isset($statusAggregation[$statusName])) {
+                            $statusAggregation[$statusName] = [
+                                'status' => $statusName,
+                                'weight' => 0,
+                                'count' => 0
+                            ];
+                        }
+                        $statusAggregation[$statusName]['weight'] += $grossWeight;
+                        $statusAggregation[$statusName]['count']++;
+                    }
+                }
+
+                // Increment count of items
+                $productData['count'] = $items->count();
+
+                // Convert aggregated status data to array format if not empty
+                if (!empty($statusAggregation)) {
+                    foreach ($statusAggregation as $statusData) {
+                        $productData['statuses'][] = [
+                            'status' => $statusData['status'],
+                            'weight' => $statusData['weight']
+                        ];
+                    }
+                    $itemTypeData['products'][] = $productData;
+                }
+            }
+
+            // Add item type data only if it has products with statuses
+            if (!empty($itemTypeData['products'])) {
+                $data[] = $itemTypeData;
+            }
+        }
+
+        return $data;
+    }
+
+    public function getProductionStats($startDate, $endDate)
+    {
+        $data = [];
+
+        // Convert date strings to Carbon instances
+        $startDate = Carbon::parse($startDate);
+        $endDate = Carbon::parse($endDate);
+
+        // Get all item types
+        $itemTypes = ItemType::all();
+
+        foreach ($itemTypes as $itemType) {
+            $itemTypeData = [
+                'itemType' => $itemType->item_type,
+                'products' => []
+            ];
+
+            // Get all products associated with this item type
+            $products = Product::whereHas('items', function ($query) use ($itemType) {
+                $query->where('item_type_id', $itemType->id);
+            })->get();
+
+            foreach ($products as $product) {
+                $productData = [
+                    'product' => $product->product,
+                    'count' => 0,
+                    'statuses' => []
+                ];
+
+                // Get items for the product and item type where the first status is "IN" and within the date range
+                $items = $product->items()
+                    ->where('item_type_id', $itemType->id)
+                    ->whereHas('statuses', function ($query) use ($startDate, $endDate) {
+                        $query->where('status_id', function ($query) {
+                            $query->select('id')
+                                ->from('statuses')
+                                ->where('status', 'IN')
+                                ->orderBy('date_time')
+                                ->limit(1);
+                        })->whereBetween('date_time', [$startDate, $endDate]);
+                    })
+                    ->get();
+
+                $statusAggregation = [];
+
+                foreach ($items as $item) {
+                    $firstStatusRecord = $item->statuses()
+                        ->whereHas('status', function ($query) {
+                            $query->where('status', 'IN');
+                        })
+                        ->orderBy('date_time')
+                        ->first();
+
+                    $firstWeight = $item->weights()
+                        ->orderBy('date_time')
+                        ->first();
+
+                    if ($firstStatusRecord && $firstWeight && Carbon::parse($firstStatusRecord->date_time)->between($startDate, $endDate)) {
+                        $statusName = $firstStatusRecord->status->status;
+                        $grossWeight = $firstWeight->gross_weight;
+
+                        // Aggregate status data
+                        if (!isset($statusAggregation[$statusName])) {
+                            $statusAggregation[$statusName] = [
+                                'status' => $statusName,
+                                'weight' => 0,
+                                'count' => 0
+                            ];
+                        }
+                        $statusAggregation[$statusName]['weight'] += $grossWeight;
+                        $statusAggregation[$statusName]['count']++;
+                    }
+                }
+
+                // Increment count of items
+                $productData['count'] = $items->count();
+
+                // Convert aggregated status data to array format if not empty
+                if (!empty($statusAggregation)) {
+                    foreach ($statusAggregation as $statusData) {
+                        $productData['statuses'][] = [
+                            'status' => $statusData['status'],
+                            'weight' => $statusData['weight']
+                        ];
+                    }
+                    $itemTypeData['products'][] = $productData;
+                }
+            }
+
+            // Add item type data only if it has products with statuses
+            if (!empty($itemTypeData['products'])) {
+                $data[] = $itemTypeData;
+            }
+        }
+
+        return $data;
+    }
+
+
+    public function getTodayProductionStats()
+    {
+        $today = Carbon::today();
+        return $this->getProductionStats($today, $today->copy()->endOfDay());
+    }
+
+    public function getYesterdayProductionStats()
+    {
+        $yesterday = Carbon::yesterday();
+        return $this->getProductionStats($yesterday, $yesterday->copy()->endOfDay());
+    }
+
+    public function getCurrentWeekProductionStats()
+    {
+        $startOfWeek = Carbon::now()->startOfWeek();
+        $endOfWeek = Carbon::now()->endOfWeek();
+        return $this->getProductionStats($startOfWeek, $endOfWeek);
+    }
+
+    public function getPreviousWeekProductionStats()
+    {
+        $startOfPreviousWeek = Carbon::now()->subWeek()->startOfWeek();
+        $endOfPreviousWeek = Carbon::now()->subWeek()->endOfWeek();
+        return $this->getProductionStats($startOfPreviousWeek, $endOfPreviousWeek);
+    }
+
+    public function getCurrentMonthProductionStats()
+    {
+        $startOfMonth = Carbon::now()->startOfMonth();
+        $endOfMonth = Carbon::now()->endOfMonth();
+        return $this->getProductionStats($startOfMonth, $endOfMonth);
+    }
+
+    public function getPreviousMonthProductionStats()
+    {
+        $startOfPreviousMonth = Carbon::now()->subMonth()->startOfMonth();
+        $endOfPreviousMonth = Carbon::now()->subMonth()->endOfMonth();
+        return $this->getProductionStats($startOfPreviousMonth, $endOfPreviousMonth);
+    }
+
+
     public function index(Request $request)
     {
         $from_date_time = $request->input('from_date_time');
@@ -237,13 +559,26 @@ class DashboardController extends Controller
         $previous_month_end = Carbon::now()->subMonth()->endOfMonth();
 
         $current_stats_data = $this->getCurrentStats();
-        $current_week_data = $this->getInventoryStats($current_week_start, $current_week_end);
-        $previous_week_data = $this->getInventoryStats($previous_week_start, $previous_week_end);
-        $current_month_data = $this->getInventoryStats($current_month_start, $current_month_end);
-        $previous_month_data = $this->getInventoryStats($previous_month_start, $previous_month_end);
+        // $current_week_data = $this->getInventoryStats($current_week_start, $current_week_end);
+        // $previous_week_data = $this->getInventoryStats($previous_week_start, $previous_week_end);
+        // $current_month_data = $this->getInventoryStats($current_month_start, $current_month_end);
+        // $previous_month_data = $this->getInventoryStats($previous_month_start, $previous_month_end);
+
+        $current_inventory = $this->getCurrentInventory();
+        $historical_stats = $this->getHistoricalStats();
+
+        $today_data = $this->getTodayProductionStats();
+        $yesterday_data = $this->getYesterdayProductionStats();
+        $current_week_data = $this->getCurrentWeekProductionStats();
+        $previous_week_data = $this->getPreviousWeekProductionStats();
+        $current_month_data = $this->getCurrentMonthProductionStats();
+        $previous_month_data = $this->getPreviousMonthProductionStats();
 
         return Inertia::render("Dashboard/Index", [
-            'current_data' => $current_stats_data,
+            'current_data' => $current_inventory,
+            'historical_stats' => $historical_stats,
+            'today_data' => $today_data,
+            'yesterday_data' => $yesterday_data,
             'current_week_data' => $current_week_data,
             'previous_week_data' => $previous_week_data,
             'current_month_data' => $current_month_data,

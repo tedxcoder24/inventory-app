@@ -148,8 +148,8 @@ class ItemController extends Controller
             'statuses.status',
         ])->findOrFail($id);
 
-        $current_weight = $item->weights()->orderBy('date_time')->latest()->first();
-        $current_status = $item->statuses()->orderBy('date_time')->with(['status'])->latest()->first();
+        $current_weight = $item->weights()->orderBy('date_time', 'desc')->first();
+        $current_status = $item->statuses()->orderBy('date_time', 'desc')->with(['status'])->first();
         $weight_unit = ItemType::findOrFail($item->item_type_id)->weightUnit()->first();
 
         return Inertia::render('Items/Show', [
