@@ -66,7 +66,7 @@ class DashboardController extends Controller
                             // Ensure the status and weight have matching date times (or close to each other)
                             if ($statusDateTime->isSameDay($weightDateTime)) {
                                 $statusName = $status->status->status;
-                                $grossWeight = $weight->gross_weight;
+                                $netWeight = $weight->net_weight;
 
                                 // Aggregate status data
                                 if (!isset($statusAggregation[$statusName])) {
@@ -76,7 +76,7 @@ class DashboardController extends Controller
                                         'count' => 0
                                     ];
                                 }
-                                $statusAggregation[$statusName]['weight'] += $grossWeight;
+                                $statusAggregation[$statusName]['weight'] += $netWeight;
                                 $statusAggregation[$statusName]['count']++;
                             }
                         }
@@ -169,13 +169,13 @@ class DashboardController extends Controller
 
                     if ($latestStatus && $latestWeight) {
                         $statusName = $latestStatus->status->status;
-                        $grossWeight = $latestWeight->gross_weight;
+                        $netWeight = $latestWeight->net_weight;
 
                         // Aggregate status data
                         if (!isset($statusAggregation[$statusName])) {
                             $statusAggregation[$statusName] = [
                                 'status' => $statusName,
-                                'weight' => $grossWeight
+                                'weight' => $netWeight
                             ];
                         }
                     }
@@ -265,7 +265,7 @@ class DashboardController extends Controller
 
                     if ($latestStatus && $latestWeight && $latestStatus->status->status === 'IN') {
                         $statusName = $latestStatus->status->status;
-                        $grossWeight = $latestWeight->gross_weight;
+                        $netWeight = $latestWeight->net_weight;
 
                         // Aggregate status data
                         if (!isset($statusAggregation[$statusName])) {
@@ -275,7 +275,7 @@ class DashboardController extends Controller
                                 'count' => 0
                             ];
                         }
-                        $statusAggregation[$statusName]['weight'] += $grossWeight;
+                        $statusAggregation[$statusName]['weight'] += $netWeight;
                         $statusAggregation[$statusName]['count']++;
                     }
                 }
@@ -356,7 +356,7 @@ class DashboardController extends Controller
 
                     if ($latestStatus && $latestWeight && $latestStatus->status->status !== 'IN') {
                         $statusName = $latestStatus->status->status;
-                        $grossWeight = $latestWeight->gross_weight;
+                        $netWeight = $latestWeight->net_weight;
 
                         // Aggregate status data
                         if (!isset($statusAggregation[$statusName])) {
@@ -366,7 +366,7 @@ class DashboardController extends Controller
                                 'count' => 0
                             ];
                         }
-                        $statusAggregation[$statusName]['weight'] += $grossWeight;
+                        $statusAggregation[$statusName]['weight'] += $netWeight;
                         $statusAggregation[$statusName]['count']++;
                     }
                 }
@@ -454,7 +454,7 @@ class DashboardController extends Controller
 
                     if ($firstStatusRecord && $firstWeight && Carbon::parse($firstStatusRecord->date_time)->between($startDate, $endDate)) {
                         $statusName = $firstStatusRecord->status->status;
-                        $grossWeight = $firstWeight->gross_weight;
+                        $netWeight = $firstWeight->net_weight;
 
                         // Aggregate status data
                         if (!isset($statusAggregation[$statusName])) {
@@ -464,7 +464,7 @@ class DashboardController extends Controller
                                 'count' => 0
                             ];
                         }
-                        $statusAggregation[$statusName]['weight'] += $grossWeight;
+                        $statusAggregation[$statusName]['weight'] += $netWeight;
                         $statusAggregation[$statusName]['count']++;
                     }
                 }

@@ -124,6 +124,7 @@ class ItemController extends Controller
             'operator_id' => $validated_data['operator_id'],
             'item_id' => $item->id,
             'gross_weight' => $validated_data['gross_weight'],
+            'net_weight' => $validated_data['gross_weight'] - ($validated_data['tare_weight'] / $item->itemType->weightUnit->convert_to_grams),
             'note' => $request->note,
         ]);
 
@@ -300,6 +301,7 @@ class ItemController extends Controller
             'operator_id' => $request->operator_id,
             'item_id' => $item->id,
             'gross_weight' => $request->gross_weight,
+            'net_weight' => $request->gross_weight - ($item->tare_weight / $item->itemType->weightUnit->convert_to_grams),
             'note' => $request->note,
         ]);
 
@@ -364,6 +366,7 @@ class ItemController extends Controller
                 'operator_id' => $request->operator_id,
                 'item_id' => $item->id,
                 'gross_weight' => $request->gross_weight,
+                'net_weight' => $request->gross_weight - ($item->tare_weight / $item->itemType->weightUnit->convert_to_grams),
                 'note' => $request->note,
             ]);
         }

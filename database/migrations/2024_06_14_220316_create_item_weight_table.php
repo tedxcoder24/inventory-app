@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('operator_id')->constrained();
             $table->foreignId('item_id')->constrained();
             $table->float('gross_weight', 8, 2)->unsigned();
+            $table->float('net_weight', 8, 2)->unsigned();
             $table->string('note', 255)->nullable();
             $table->timestamps();
         });
