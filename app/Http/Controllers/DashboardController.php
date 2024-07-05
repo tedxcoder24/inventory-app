@@ -169,7 +169,7 @@ class DashboardController extends Controller
 
                     if ($latestStatus && $latestWeight) {
                         $statusName = $latestStatus->status->status;
-                        $netWeight = $latestWeight->net_weight;
+                        $netWeight = $latestWeight->net_weight * $item->itemType->weightUnit->convert_to_grams;
 
                         // Aggregate status data
                         if (!isset($statusAggregation[$statusName])) {
@@ -265,7 +265,7 @@ class DashboardController extends Controller
 
                     if ($latestStatus && $latestWeight && $latestStatus->status->status === 'IN') {
                         $statusName = $latestStatus->status->status;
-                        $netWeight = $latestWeight->net_weight;
+                        $netWeight = $latestWeight->net_weight * $item->itemType->weightUnit->convert_to_grams;
 
                         // Aggregate status data
                         if (!isset($statusAggregation[$statusName])) {
@@ -356,7 +356,7 @@ class DashboardController extends Controller
 
                     if ($latestStatus && $latestWeight && $latestStatus->status->status !== 'IN') {
                         $statusName = $latestStatus->status->status;
-                        $netWeight = $latestWeight->net_weight;
+                        $netWeight = $latestWeight->net_weight * $item->itemType->weightUnit->convert_to_grams;
 
                         // Aggregate status data
                         if (!isset($statusAggregation[$statusName])) {
