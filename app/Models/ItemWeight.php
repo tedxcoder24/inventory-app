@@ -14,6 +14,7 @@ class ItemWeight extends Model
         'operator_id',
         'item_id',
         'gross_weight',
+        'net_weight',
         'note',
     ];
 
@@ -24,6 +25,6 @@ class ItemWeight extends Model
 
     public function item()
     {
-        return $this->belongsTo(Item::class,'item_id');
+        return $this->belongsTo(Item::class, 'item_id');
     }
 }
