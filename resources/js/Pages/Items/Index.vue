@@ -2,7 +2,6 @@
 import { computed, ref } from 'vue';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import Checkbox from '@/Components/Checkbox.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import DialogModal from '@/Components/DialogModal.vue';
@@ -13,6 +12,8 @@ import DateTimePicker from '@/Components/DateTimePicker.vue';
 import SearchInput from '@/Components/SearchInput.vue';
 import ConfirmationModal from '@/Components/ConfirmationModal.vue';
 import DangerButton from '@/Components/DangerButton.vue';
+
+import { VDataTable, VTextField, VBtn, VIcon } from 'vuetify/lib/components/index.mjs';
 
 const props = defineProps({
     items: {
@@ -31,7 +32,6 @@ const role = computed(() => page.props.auth.user.role);
 
 const showStatusModal = ref(false);
 const showWeightModal = ref(false);
-const selectedItems = ref([]);
 const updateItemStatusForm = useForm({
     ids: [],
     date_time: new Date(),
@@ -47,34 +47,6 @@ const updateItemWeightForm = useForm({
     gross_weight: 0,
     note: '',
 });
-
-const isAllSelected = computed({
-    get() {
-        return selectedItems.value.length === props.items.data.length;
-    },
-    set(value) {
-        if (value) {
-            selectedItems.value = props.items.data.map(item => item.id);
-        } else {
-            selectedItems.value = [];
-        }
-    },
-});
-
-const isIndeterminate = computed(() => {
-  return (
-    selectedItems.value.length > 0 &&
-    selectedItems.value.length < props.items.data.length
-  );
-});
-
-const toggleSelectAll = (value) => {
-  isAllSelected.value = value;
-};
-
-const updateSelectedItems = (value) => {
-  selectedItems.value = value;
-};
 
 const showDeleteConfirmModal = ref(false);
 const itemToDelete = ref();
@@ -117,6 +89,34 @@ const searchedItems = ref([]);
 const handleSearchedItems = (items) => {
     searchedItems.value = items;
 }
+
+const editItem = (item) => {
+    router.visit(route('items.edit', item.id));
+}
+
+const openDeleteItemModal = (item) => {
+    showDeleteConfirmModal.value = true;
+    itemToDelete.value = item;
+}
+
+const headers = ref([
+    { title: 'Serial Number', key: 'serial_number' },
+    { title: 'Strain', key: 'strain' },
+    { title: 'Type', key: 'item_type' },
+    { title: 'Product', key: 'product' },
+    { title: 'Status', key: 'status' },
+    { title: 'Net Weight', key: 'net_weight' },
+    { title: 'Color', key: 'color' },
+    { title: 'Clarity', key: 'clarity' },
+    { title: 'Appearance', key: 'appearance' },
+    { title: 'Batch ID', key: 'batch_id' },
+    { title: 'Metric ID', key: 'metrc_id' },
+    { title: 'Tare Weight', key: 'tare_weight' },
+    { title: 'Gross Weight', key: 'gross_weight' },
+    { title: 'Date Time', key: 'date_time' },
+    { title: 'Operator', key: 'operator' },
+    { title: 'Actions', key: 'actions', sortable: false },
+]);
 </script>
 
 <template>
@@ -152,271 +152,17 @@ const handleSearchedItems = (items) => {
                         </div>
 
                         <div class="flex justify-center">
-                            <table class="block overflow-y-auto whitespace-nowrap divide-y divide-gray-200">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <!-- <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
-                                            <label class="flex items-center justify-center">
-                                                <Checkbox 
-                                                    name="check-all" 
-                                                    :checked="isAllSelected"
-                                                    :indeterminate="isIndeterminate"
-                                                    @update:checked="toggleSelectAll"
-                                                />
-                                            </label>
-                                        </th> -->
-                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
-                                            Serial Number
-                                        </th>
-                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
-                                            Operator
-                                        </th>
-                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
-                                            Status
-                                        </th>
-                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
-                                            Date Time
-                                        </th>
-                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
-                                            Type
-                                        </th>
-                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
-                                            Batch ID
-                                        </th>
-                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
-                                            Metric ID
-                                        </th>
-                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
-                                            Tare Weight
-                                        </th>
-                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
-                                            Gross Weight
-                                        </th>
-                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
-                                            Net Weight
-                                        </th>
-                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
-                                            Strain
-                                        </th>
-                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
-                                            Product
-                                        </th>
-                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
-                                            Color
-                                        </th>
-                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
-                                            Clarity
-                                        </th>
-                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
-                                            Appearance
-                                        </th>
-                                        <th v-if="role === 'admin'" scope="col" class="relative px-6 py-3">
-                                            <span class="sr-only">Edit</span>
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
-                                    <tr v-for="item in items.data" :key="item.id">
-                                        <!-- <td class="px-6 py-4 whitespace-nowrap">
-                                            <label class="flex items-center justify-center">
-                                                <Checkbox 
-                                                    name="check-all" 
-                                                    :checked="selectedItems"
-                                                    :value="item.id"
-                                                    @update:checked="updateSelectedItems"
-                                                />
-                                            </label>
-                                        </td> -->
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="flex items-center justify-center">
-                                                <div>
-                                                    <div class="text-sm font-medium text-gray-900">
-                                                        {{ item.serial_number }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="flex items-center justify-center">
-                                                <div>
-                                                    <div class="text-sm font-medium text-gray-900">
-                                                        {{ item.operator }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="flex items-center justify-center">
-                                                <div>
-                                                    <div class="text-sm font-medium text-gray-900">
-                                                        {{ item.status }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="flex items-center justify-center">
-                                                <div>
-                                                    <div class="text-sm font-medium text-gray-900">
-                                                        {{ item.date_time }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="flex items-center justify-center">
-                                                <div>
-                                                    <div class="text-sm font-medium text-gray-900">
-                                                        {{ item.item_type }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="flex items-center justify-center">
-                                                <div>
-                                                    <div class="text-sm font-medium text-gray-900">
-                                                        {{ item.batch_id }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="flex items-center justify-center">
-                                                <div>
-                                                    <div class="text-sm font-medium text-gray-900">
-                                                        {{ item.metrc_id }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="flex items-center justify-center">
-                                                <div>
-                                                    <div class="text-sm font-medium text-gray-900">
-                                                        {{ item.tare_weight.toFixed(2) }} (g)
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="flex items-center justify-center">
-                                                <div>
-                                                    <div class="text-sm font-medium text-gray-900">
-                                                        {{ item.gross_weight.toFixed(2) }} ({{ item.weight_unit }})
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="flex items-center justify-center">
-                                                <div>
-                                                    <div class="text-sm font-medium text-gray-900">
-                                                        {{ (item.gross_weight - (item.tare_weight / item.convert_to_grams)).toFixed(2) }} ({{ item.weight_unit }})
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="flex items-center justify-center">
-                                                <div>
-                                                    <div class="text-sm font-medium text-gray-900">
-                                                        {{ item.strain }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="flex items-center justify-center">
-                                                <div>
-                                                    <div class="text-sm font-medium text-gray-900">
-                                                        {{ item.product }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="flex items-center justify-center">
-                                                <span class="inline-flex px-2 text-xs font-semibold leading-5 text-green-800 bg-green-100 rounded-full">
-                                                    {{ item.color }}
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="flex items-center justify-center">
-                                                <div>
-                                                    <div class="text-sm font-medium text-gray-900">
-                                                        {{ item.clarity }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="flex items-center justify-center">
-                                                <div>
-                                                    <div class="text-sm font-medium text-gray-900">
-                                                        {{ item.appearance }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td v-if="role === 'admin'" class="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                                            <div class="flex items-center justify-center">
-                                                <Link
-                                                    :href="`/items/${item.id}`"
-                                                    class="float-left px-4 py-2 text-green-400 duration-100 rounded hover:text-green-600"
-                                                >
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye w-6 h-6" viewBox="0 0 16 16">
-                                                        <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/>
-                                                        <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/>
-                                                    </svg>
-                                                </Link>
-                                                <Link
-                                                    :href="`/items/${item.id}/edit`"
-                                                    class="float-left px-4 py-2 text-green-400 duration-100 rounded hover:text-green-600"
-                                                >
-                                                    <svg
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        class="w-6 h-6"
-                                                        fill="none"
-                                                        viewBox="0 0 24 24"
-                                                        stroke="currentColor"
-                                                    >
-                                                        <path
-                                                            stroke-linecap="round"
-                                                            stroke-linejoin="round"
-                                                            stroke-width="2"
-                                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                                    </svg>
-                                                </Link>
-                                                <a
-                                                    href="#"
-                                                    @click="showDeleteConfirmModal = true; itemToDelete = item"
-                                                    class="float-left px-4 py-2 ml-2 text-red-400 duration-100 rounded hover:text-red-600"
-                                                >
-                                                    <svg
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        class="w-6 h-6"
-                                                        fill="none"
-                                                        viewBox="0 0 24 24"
-                                                        stroke="currentColor"
-                                                    >
-                                                        <path
-                                                            stroke-linecap="round"
-                                                            stroke-linejoin="round"
-                                                            stroke-width="2"
-                                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                                        />
-                                                    </svg>
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        There are {{ items.data.length }} item(s).
-                                    </tr>
-                                </tbody>
-                            </table>
+                            <v-data-table
+                                :headers="headers"
+                                :items="items.data"
+                                :items-per-page="10"
+                                item-value="id"
+                            >
+                                <template v-slot:[`item.actions`]="{ item }">
+                                    <v-btn icon @click="editItem(item)"><v-icon size="small">mdi-pencil</v-icon></v-btn>
+                                    <v-btn icon @click="openDeleteItemModal(item)"><v-icon size="small">mdi-delete</v-icon></v-btn>
+                                </template>
+                            </v-data-table>
                         </div>
                     </div>
                 </div>
