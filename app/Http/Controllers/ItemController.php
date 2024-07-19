@@ -31,6 +31,10 @@ use App\Models\Config;
 use App\Models\ItemStatus;
 use App\Models\ItemWeight;
 
+use App\Events\ItemCreated;
+use App\Events\ItemUpdated;
+use App\Events\ItemDeleted;
+
 class ItemController extends Controller
 {
     /**
@@ -128,6 +132,7 @@ class ItemController extends Controller
             'note' => $request->note,
         ]);
 
+        event(new ItemCreated($item));
         // return redirect()->route('items.index')->with('success', 'Item has been created!');
     }
 
@@ -235,6 +240,8 @@ class ItemController extends Controller
         //     'note' => $request->note,
         // ]);
 
+        event(new ItemUpdated($item));
+
         return redirect('/items')->with('success', 'Item has been updated!');
     }
 
@@ -244,6 +251,8 @@ class ItemController extends Controller
     public function destroy(Item $item)
     {
         $item->delete();
+
+        event(new ItemUpdated($item));
 
         return back()->with('delete', 'Item has been deleted!');
     }
@@ -273,6 +282,8 @@ class ItemController extends Controller
             'status_id' => $request->status_id,
             'note' => $request->note,
         ]);
+
+        event(new ItemUpdated($item));
 
         return back()->with('success', 'Status has been changed!');
     }
@@ -304,6 +315,8 @@ class ItemController extends Controller
             'net_weight' => $request->gross_weight - ($item->tare_weight / $item->itemType->weightUnit->convert_to_grams),
             'note' => $request->note,
         ]);
+
+        event(new ItemUpdated($item));
 
         return back()->with('success', 'Weight has been changed!');
     }

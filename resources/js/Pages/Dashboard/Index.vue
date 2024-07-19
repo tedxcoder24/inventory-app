@@ -1,7 +1,9 @@
 <script setup>
-import { Head, useForm } from '@inertiajs/vue3';
+import { onMounted, ref } from 'vue';
+import { Head } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import StatsSection from './Partials/StatsSection.vue';
+import axios from 'axios';
 
 const props = defineProps({
     current_data: { type: Array },
@@ -12,9 +14,54 @@ const props = defineProps({
     previous_week_data: { type: Array },
     current_month_data: { type: Array },
     previous_month_data: { type: Array },
-    from_date: { type: Date },
-    to_date: { type: Date }
 });
+
+const currentData = ref(props.current_data);
+const historicalStats = ref(props.historical_stats);
+const todayData = ref(props.today_data);
+const yesterdayData = ref(props.yesterday_data);
+const currentWeekData = ref(props.current_week_data);
+const previousWeekData = ref(props.previous_week_data);
+const currentMonthData = ref(props.current_month_data);
+const previousMonthData = ref(props.previous_month_data);
+
+onMounted(() => {
+    window.Echo.channel('item-channel')
+        .listen('ItemCreated', (event) => {
+            // Handle item creation, e.g., add item to currentData
+            console.log('Item created event received', event);
+            fetchData();
+        })
+        .listen('ItemUpdated', (event) => {
+            // Handle item update, e.g., update item in currentData
+            console.log('Item created event updated', event);
+            fetchData();
+            // const index = currentData.value.findIndex(item => item.id === event.item.id);
+            // if (index !== -1) {
+            //     currentData.value[index] = event.item;
+            // }
+        })
+        .listen('ItemDeleted', (event) => {
+            // Handle item deletion, e.g., remove item from currentData
+            console.log('Item created event deleted', event);
+            fetchData();
+            // currentData.value = currentData.value.filter(item => item.id !== event.itemId);
+        });
+});
+
+const fetchData = async () => {
+    const response = await axios.get('/dashboard/data');
+    const data = response.data;
+
+    currentData.value = data.current_data;
+    historicalStats.value = data.historical_stats;
+    todayData.value = data.today_data;
+    yesterdayData.value = data.yesterday_data;
+    currentWeekData.value = data.current_week_data;
+    previousWeekData.value = data.previous_week_data;
+    currentMonthData.value = data.current_month_data;
+    previousMonthData.value = data.previous_month_data;
+}
 
 function formatDate(date) {
     const options = { month: '2-digit', day: '2-digit', year: '2-digit' };
@@ -102,47 +149,6 @@ const getCurrentMonthDates = () => {
     
     return { start: formatDate(firstDayOfCurrentMonth), end: formatDate(lastDayOfCurrentMonth) };
 }
-
-const form = useForm({
-    from_date_time: props.from_date,
-    to_date_time: props.to_date,
-});
-
-const submit = () => {
-    form.get(route('dashboard'));
-}
-
-const viewPreviousWeek = () => {
-    const previousWeek = getPreviousWeekDates();
-    form.from_date_time = previousWeek.start;
-    form.to_date_time = previousWeek.end;
-    submit();
-}
-
-const viewPreviousMonth = () => {
-    const previousMonth = getPreviousMonthDates();
-    form.from_date_time = previousMonth.start;
-    form.to_date_time = previousMonth.end;
-    submit();
-}
-
-const viewCurrentWeek = () => {
-    const currentWeek = getCurrentWeekDates();
-    form.from_date_time = currentWeek.start;
-    form.to_date_time = currentWeek.end;
-    submit();
-}
-
-const getAttributeKeys = (item) => {
-    if (item.statuses) {
-        const statusKeys = Object.keys(item.statuses);
-        if (statusKeys.length > 0) {
-            const status = item.statuses[statusKeys[0]];
-            return Object.keys(status).filter(key => key !== 'weight' && key !== 'count')[0];
-        }
-    }
-    return []
-}
 </script>
 
 <template>
@@ -164,26 +170,26 @@ const getAttributeKeys = (item) => {
                                         <h2 class="font-semibold text-center text-xl text-gray-700 leading-tight"> CURRENT INVENTORY </h2>
                                     </div>
 
-                                    <div v-if="current_data.length === 0">
+                                    <div v-if="currentData.length === 0">
                                         <div class="flex justify-center items-center p-8">
                                             <span class="font-semibold text-center text-lg"> No Data </span>
                                         </div>
                                     </div>
                                     <div v-else>
-                                        <StatsSection :data="current_data" />
+                                        <StatsSection :data="currentData" />
                                     </div>
 
                                     <div class="flex justify-center items-center p-4 bg-emerald-200">
                                         <h2 class="font-semibold text-center text-xl text-gray-700 leading-tight"> HISTORICAL STATS </h2>
                                     </div>
 
-                                    <div v-if="historical_stats.length === 0">
+                                    <div v-if="historicalStats.length === 0">
                                         <div class="flex justify-center items-center p-8">
                                             <span class="font-semibold text-center text-lg"> No Data </span>
                                         </div>
                                     </div>
                                     <div v-else>
-                                        <StatsSection :data="historical_stats" />
+                                        <StatsSection :data="historicalStats" />
                                     </div>
                                 </div>
 
@@ -197,13 +203,13 @@ const getAttributeKeys = (item) => {
                                             <h2 class="text-center text-base text-gray-700 leading-tight"> Today: {{ getTodayDate() }} </h2>
                                         </div>
 
-                                        <div v-if="today_data.length === 0">
+                                        <div v-if="todayData.length === 0">
                                             <div class="flex justify-center items-center p-8">
                                                 <span class="font-semibold text-center text-lg"> No Data </span>
                                             </div>
                                         </div>
                                         <div v-else>
-                                            <StatsSection :data="today_data" />
+                                            <StatsSection :data="todayData" />
                                         </div>
                                     </div>
 
@@ -212,13 +218,13 @@ const getAttributeKeys = (item) => {
                                             <h2 class="text-center text-base text-gray-700 leading-tight"> Yesterday: {{ getYesterdayDate() }} </h2>
                                         </div>
 
-                                        <div v-if="yesterday_data.length === 0">
+                                        <div v-if="yesterdayData.length === 0">
                                             <div class="flex justify-center items-center p-8">
                                                 <span class="font-semibold text-center text-lg"> No Data </span>
                                             </div>
                                         </div>
                                         <div v-else>
-                                            <StatsSection :data="yesterday_data" />
+                                            <StatsSection :data="yesterdayData" />
                                         </div>
                                     </div>
 
@@ -227,13 +233,13 @@ const getAttributeKeys = (item) => {
                                             <h2 class="text-center text-base text-gray-700 leading-tight"> Current Week: {{ getCurrentWeekDates().start }} - {{ getCurrentWeekDates().end }} </h2>
                                         </div>
 
-                                        <div v-if="current_week_data.length === 0">
+                                        <div v-if="currentWeekData.length === 0">
                                             <div class="flex justify-center items-center p-8">
                                                 <span class="font-semibold text-center text-lg"> No Data </span>
                                             </div>
                                         </div>
                                         <div v-else>
-                                            <StatsSection :data="current_week_data" />
+                                            <StatsSection :data="currentWeekData" />
                                         </div>
                                     </div>
 
@@ -242,13 +248,13 @@ const getAttributeKeys = (item) => {
                                             <h2 class="text-center text-base text-gray-700 leading-tight"> Previous Week: {{ getPreviousWeekDates().start }} - {{ getPreviousWeekDates().end }} </h2>
                                         </div>
 
-                                        <div v-if="previous_week_data.length === 0">
+                                        <div v-if="previousWeekData.length === 0">
                                             <div class="flex justify-center items-center p-8">
                                                 <span class="font-semibold text-center text-lg"> No Data </span>
                                             </div>
                                         </div>
                                         <div v-else>
-                                            <StatsSection :data="previous_week_data" />
+                                            <StatsSection :data="previousWeekData" />
                                         </div>
                                     </div>
 
@@ -257,13 +263,13 @@ const getAttributeKeys = (item) => {
                                             <h2 class="text-center text-base text-gray-700 leading-tight"> Current Month: {{ getCurrentMonthDates().start }} - {{ getCurrentMonthDates().end }} </h2>
                                         </div>
 
-                                        <div v-if="current_month_data.length === 0">
+                                        <div v-if="currentMonthData.length === 0">
                                             <div class="flex justify-center items-center p-8">
                                                 <span class="font-semibold text-center text-lg"> No Data </span>
                                             </div>
                                         </div>
                                         <div v-else>
-                                            <StatsSection :data="current_month_data" />
+                                            <StatsSection :data="currentMonthData" />
                                         </div>
                                     </div>
 
@@ -272,13 +278,13 @@ const getAttributeKeys = (item) => {
                                             <h2 class="text-center text-base text-gray-700 leading-tight"> Previous Month: {{ getPreviousMonthDates().start }} - {{ getPreviousMonthDates().end }} </h2>
                                         </div>
 
-                                        <div v-if="previous_month_data.length === 0">
+                                        <div v-if="previousMonthData.length === 0">
                                             <div class="flex justify-center items-center p-8">
                                                 <span class="font-semibold text-center text-lg"> No Data </span>
                                             </div>
                                         </div>
                                         <div v-else>
-                                            <StatsSection :data="previous_month_data" />
+                                            <StatsSection :data="previousMonthData" />
                                         </div>
                                     </div>
                                 </div>
