@@ -33,6 +33,15 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
+Route::get('/dashboard/data', [DashboardController::class, 'getData'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard.data');
+
+Route::get('/test-broadcast', function() {
+    event(new App\Events\TestEvent());
+    return 'Event has been sent!';
+});
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

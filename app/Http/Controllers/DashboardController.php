@@ -342,12 +342,6 @@ class DashboardController extends Controller
 
     public function index(Request $request)
     {
-        $from_date_time = $request->input('from_date_time');
-        $to_date_time = $request->input("to_date_time");
-
-        $from_date = isset($from_date_time) ? Carbon::parse($from_date_time) : Carbon::now()->startOfWeek();
-        $to_date = isset($to_date_time) ? Carbon::parse($to_date_time) : Carbon::now()->endOfWeek();
-
         $current_inventory = $this->getCurrentInventory();
         $historical_stats = $this->getHistoricalStats();
 
@@ -367,8 +361,30 @@ class DashboardController extends Controller
             'previous_week_data' => $previous_week_data,
             'current_month_data' => $current_month_data,
             'previous_month_data' => $previous_month_data,
-            'from_date' => $from_date,
-            'to_date' => $to_date
+        ]);
+    }
+
+    public function getData()
+    {
+        $current_inventory = $this->getCurrentInventory();
+        $historical_stats = $this->getHistoricalStats();
+
+        $today_data = $this->getTodayProductionStats();
+        $yesterday_data = $this->getYesterdayProductionStats();
+        $current_week_data = $this->getCurrentWeekProductionStats();
+        $previous_week_data = $this->getPreviousWeekProductionStats();
+        $current_month_data = $this->getCurrentMonthProductionStats();
+        $previous_month_data = $this->getPreviousMonthProductionStats();
+
+        return response()->json([
+            'current_data' => $current_inventory,
+            'historical_stats' => $historical_stats,
+            'today_data' => $today_data,
+            'yesterday_data' => $yesterday_data,
+            'current_week_data' => $current_week_data,
+            'previous_week_data' => $previous_week_data,
+            'current_month_data' => $current_month_data,
+            'previous_month_data' => $previous_month_data,
         ]);
     }
 }

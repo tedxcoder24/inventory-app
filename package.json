@@ -25,7 +25,9 @@
         "@protonemedia/inertiajs-tables-laravel-query-builder": "^2.2.0",
         "date-fns": "^3.6.0",
         "flatpickr": "^4.6.13",
+        "laravel-echo": "^1.16.1",
         "lodash-es": "^4.17.21",
+        "pusher-js": "^8.4.0-rc2",
         "vue-flatpickr-component": "^11.0.5",
         "vuetify": "^3.6.13-3.7.0-beta.0.0"
     }
