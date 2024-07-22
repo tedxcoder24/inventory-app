@@ -78,6 +78,8 @@ const form = useForm({
     value: '',
     type: '',
     weight_unit: '',
+    abbreviation: '',
+    convert_to_grams: 1,
 });
 
 const createAttribute = () => {
@@ -162,6 +164,11 @@ const createAttribute = () => {
                             <AttributeTable header="Status" :attributes="statuses.data" />
                         </div>
 
+                        <div>
+                            <label>Weight Unit</label>
+
+                            <AttributeTable header="Weight Unit" :attributes="weightUnits.data" />
+                        </div>
                     </div>
                 </div>
             </div>
@@ -206,6 +213,28 @@ const createAttribute = () => {
                             type="text"
                             class="mt-1 block w-full"
                             v-model="form.value"
+                        />
+                    </div>
+
+                    <div v-if="form.type === '8'">
+                        <InputLabel for="abbreviation" value="Abbreviation" />
+
+                        <TextInput
+                            id="abbreviation"
+                            type="text"
+                            class="mt-1 block w-full"
+                            v-model="form.abbreviation"
+                        />
+                    </div>
+
+                    <div v-if="form.type === '8'">
+                        <InputLabel for="convert" value="Convert to grams" />
+
+                        <TextInput
+                            id="convert"
+                            type="text"
+                            class="mt-1 block w-full"
+                            v-model="form.convert_to_grams"
                         />
                     </div>
                 </div>
