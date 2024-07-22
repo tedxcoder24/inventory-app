@@ -32,7 +32,7 @@ class WeightUnitsTableSeeder extends Seeder
             [
                 'weight_unit' => 'Pounds',
                 'abbreviation' => 'lbs',
-                'convert_to_grams' => 453.592,
+                'convert_to_grams' => 453.59237,
             ],
         ]);
     }

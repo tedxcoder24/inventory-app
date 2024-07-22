@@ -65,16 +65,21 @@ class DashboardController extends Controller
                     if ($latestStatus && $latestWeight && $latestStatus->status->status === 'IN') {
                         $statusName = $latestStatus->status->status;
                         $netWeight = $latestWeight->net_weight * $item->itemType->weightUnit->convert_to_grams;
+                        // dd($latestWeight->net_weight);
+                        // dd($item->itemType->weightUnit->convert_to_grams);
+                        // dd($netWeight);
 
                         // Aggregate status data
                         if (!isset($statusAggregation[$statusName])) {
                             $statusAggregation[$statusName] = [
                                 'status' => $statusName,
                                 'weight' => 0,
+                                'weight_org' => 0,
                                 'count' => 0
                             ];
                         }
                         $statusAggregation[$statusName]['weight'] += $netWeight;
+                        $statusAggregation[$statusName]['weight_org'] += $latestWeight->net_weight;
                         $statusAggregation[$statusName]['count']++;
                     }
                 }
@@ -88,6 +93,7 @@ class DashboardController extends Controller
                         $productData['statuses'][] = [
                             'status' => $statusData['status'],
                             'weight' => $statusData['weight'],
+                            'weight_org' => $statusData['weight_org'],
                             'count' => $statusData['count'],
                         ];
                     }
@@ -162,10 +168,12 @@ class DashboardController extends Controller
                             $statusAggregation[$statusName] = [
                                 'status' => $statusName,
                                 'weight' => 0,
+                                'weight_org' => 0,
                                 'count' => 0
                             ];
                         }
                         $statusAggregation[$statusName]['weight'] += $netWeight;
+                        $statusAggregation[$statusName]['weight_org'] += $latestWeight->net_weight;
                         $statusAggregation[$statusName]['count']++;
                     }
                 }
@@ -179,6 +187,7 @@ class DashboardController extends Controller
                         $productData['statuses'][] = [
                             'status' => $statusData['status'],
                             'weight' => $statusData['weight'],
+                            'weight_org' => $statusData['weight_org'],
                             'count' => $statusData['count'],
                         ];
                     }
@@ -261,10 +270,12 @@ class DashboardController extends Controller
                             $statusAggregation[$statusName] = [
                                 'status' => $statusName,
                                 'weight' => 0,
+                                'weight_org' => 0,
                                 'count' => 0
                             ];
                         }
                         $statusAggregation[$statusName]['weight'] += $netWeight;
+                        $statusAggregation[$statusName]['weight_org'] += $firstWeight->net_weight;
                         $statusAggregation[$statusName]['count']++;
                     }
                 }
@@ -278,6 +289,7 @@ class DashboardController extends Controller
                         $productData['statuses'][] = [
                             'status' => $statusData['status'],
                             'weight' => $statusData['weight'],
+                            'weight_org' => $statusData['weight_org'],
                             'count' => $statusData['count'],
                         ];
                     }
