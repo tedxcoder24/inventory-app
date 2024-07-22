@@ -90,6 +90,10 @@ const handleSearchedItems = (items) => {
     searchedItems.value = items;
 }
 
+const showItem = (item) => {
+    router.visit(route('items.show', item.id));
+}
+
 const editItem = (item) => {
     router.visit(route('items.edit', item.id));
 }
@@ -159,6 +163,7 @@ const headers = ref([
                                 item-value="id"
                             >
                                 <template v-slot:[`item.actions`]="{ item }">
+                                    <v-btn icon @click="showItem(item)"><v-icon size="small">mdi-eye</v-icon></v-btn>
                                     <v-btn icon @click="editItem(item)"><v-icon size="small">mdi-pencil</v-icon></v-btn>
                                     <v-btn icon @click="openDeleteItemModal(item)"><v-icon size="small">mdi-delete</v-icon></v-btn>
                                 </template>

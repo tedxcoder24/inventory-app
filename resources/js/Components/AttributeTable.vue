@@ -28,6 +28,7 @@ const attrToDelete = ref(null);
 const attrToEdit = ref(null);
 const newAttribute = ref('');
 const weightUnit = ref();
+const abbreviation = ref();
 const showModal = ref(false);
 const showEditModal = ref(false);
 
@@ -59,7 +60,8 @@ const openEditModal = (attr) => {
     showEditModal.value = true;
     attrToEdit.value = attr;
     newAttribute.value = attr.text;
-    weightUnit.value = attr.weight_unit.id
+    weightUnit.value = attr.value;
+    abbreviation.value = attr.abbreviation;
 }
 
 const editAttr = () => {
@@ -72,6 +74,11 @@ const editAttr = () => {
     if (props.header === 'Item Type') {
         payload.weight_unit = weightUnit.value;
     }
+    
+    if (props.header === 'Weight Unit') {
+        payload.abbreviation = abbreviation;
+    }
+
     router.put(route('attributes.update', attrToEdit.value.value), payload, {
         onSuccess: () => (showEditModal.value = false)
     });
@@ -87,6 +94,15 @@ const editAttr = () => {
                 </th>
                 <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
                     {{ header }}
+                </th>
+                <th v-if="header === 'Item Type'" scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
+                    Weight Unit
+                </th>
+                <th v-if="header === 'Weight Unit'" scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
+                    Abbreviation
+                </th>
+                <th v-if="header === 'Weight Unit'" scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
+                    Grams
                 </th>
                 <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
                     Enabled
@@ -123,6 +139,26 @@ const editAttr = () => {
                         <div>
                             <div class="text-sm font-medium text-gray-900">
                                 {{ attr.weight_unit.abbreviation }}
+                            </div>
+                        </div>
+                    </div>
+                </td>
+
+                <td v-if="header === 'Weight Unit'" class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center justify-center">
+                        <div>
+                            <div class="text-sm font-medium text-gray-900">
+                                {{ attr.abbreviation }}
+                            </div>
+                        </div>
+                    </div>
+                </td>
+
+                <td v-if="header === 'Weight Unit'" class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center justify-center">
+                        <div>
+                            <div class="text-sm font-medium text-gray-900">
+                                {{ attr.convert_to_grams }}
                             </div>
                         </div>
                     </div>
@@ -230,6 +266,18 @@ const editAttr = () => {
                     :options="weightUnits.data"
                     v-model="weightUnit"
                     class="mt-1 block w-full"
+                />
+            </div>
+
+            <div v-if="header === 'Weight Unit'">
+                <InputLabel for="abbreviation" value="Abbreviation" />
+
+                <TextInput 
+                    id="abbreviation"
+                    type="text"
+                    class="mt-1 block w-full"
+                    v-model="abbreviation"
+                    required
                 />
             </div>
         </template>

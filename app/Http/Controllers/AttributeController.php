@@ -66,6 +66,10 @@ class AttributeController extends Controller
                 'value' => 7,
                 'text' => 'Status'
             ],
+            [
+                'value' => 8,
+                'text'=> 'Weight Unit'
+            ]
         ];
 
         return Inertia::render("Attributes/Index", [
@@ -95,9 +99,11 @@ class AttributeController extends Controller
      */
     public function store(AttributeStoreRequest $request)
     {
-        $attr_types = ['Operator', 'Item type', 'Strain', 'Product', 'Color', 'Clarity', 'Appearance', 'Status'];
+        $attr_types = ['Operator', 'Item type', 'Strain', 'Product', 'Color', 'Clarity', 'Appearance', 'Status', 'Weight Unit'];
         $selected_type = $attr_types[$request->type];
         $selected_weight_unit = $request->weight_unit;
+        $abbreviation = $request->abbreviation;
+        $convert_to_grams = $request->convert_to_grams;
 
         switch ($selected_type) {
             case 'Operator':
@@ -123,6 +129,9 @@ class AttributeController extends Controller
                 break;
             case 'Status':
                 Status::create(['status' => $request->value]);
+                break;
+            case 'Weight Unit':
+                WeightUnit::create(['weight_unit' => $request->value, 'abbreviation' => $abbreviation, 'convert_to_grams' => $convert_to_grams]);
                 break;
         }
 
@@ -199,6 +208,13 @@ class AttributeController extends Controller
             case 'Status':
                 Status::findOrFail($id)->update([
                     'status' => $request->text,
+                    'enabled' => $request->enabled,
+                ]);
+                break;
+            case 'Weight Unit':
+                Status::findOrFail($id)->update([
+                    'status' => $request->text,
+                    'abbreviation' => $request->abbreviation,
                     'enabled' => $request->enabled,
                 ]);
                 break;
