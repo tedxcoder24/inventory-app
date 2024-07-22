@@ -7,6 +7,7 @@ import SecondaryButton from './SecondaryButton.vue';
 import DialogModal from './DialogModal.vue';
 import InputLabel from './InputLabel.vue';
 import TextInput from './TextInput.vue';
+import Select from './Select.vue';
 
 const props = defineProps({
     header: {
@@ -17,11 +18,16 @@ const props = defineProps({
         type: Array,
         required: true,
     },
+    weightUnits: {
+        type: Array,
+        required: false
+    }
 });
 
 const attrToDelete = ref(null);
 const attrToEdit = ref(null);
 const newAttribute = ref('');
+const weightUnit = ref();
 const showModal = ref(false);
 const showEditModal = ref(false);
 
@@ -53,14 +59,20 @@ const openEditModal = (attr) => {
     showEditModal.value = true;
     attrToEdit.value = attr;
     newAttribute.value = attr.text;
+    weightUnit.value = attr.weight_unit.id
 }
 
 const editAttr = () => {
-    router.put(route('attributes.update', attrToEdit.value.value), {
+    const payload = {
         enabled: attrToEdit.value.enabled ? true : false,
         text: newAttribute.value,
         attribute: props.header
-    }, {
+    }
+
+    if (props.header === 'Item Type') {
+        payload.weight_unit = weightUnit.value;
+    }
+    router.put(route('attributes.update', attrToEdit.value.value), payload, {
         onSuccess: () => (showEditModal.value = false)
     });
 }
@@ -101,6 +113,16 @@ const editAttr = () => {
                         <div>
                             <div class="text-sm font-medium text-gray-900">
                                 {{ attr.text }}
+                            </div>
+                        </div>
+                    </div>
+                </td>
+
+                <td v-if="attr.weight_unit" class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center justify-center">
+                        <div>
+                            <div class="text-sm font-medium text-gray-900">
+                                {{ attr.weight_unit.abbreviation }}
                             </div>
                         </div>
                     </div>
@@ -197,6 +219,17 @@ const editAttr = () => {
                     class="mt-1 block w-full"
                     v-model="newAttribute"
                     required
+                />
+            </div>
+
+            <div v-if="header === 'Item Type'">
+                <InputLabel for="weightUnit" value="Weight Unit" />
+
+                <Select 
+                    id="weightUnit"
+                    :options="weightUnits.data"
+                    v-model="weightUnit"
+                    class="mt-1 block w-full"
                 />
             </div>
         </template>
