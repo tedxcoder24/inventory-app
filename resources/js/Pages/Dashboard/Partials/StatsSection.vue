@@ -41,7 +41,7 @@ const pluralize = (num, word, plural = simplePlural) => isPlural(num) ? plural(w
                                             <div class="flex items-center justify-center">
                                                 <div>
                                                     <div class="text-sm font-medium text-gray-900">
-                                                        {{ status.weight.toFixed(2) }}
+                                                        {{ Number(status.weight).toFixed(2) }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -50,7 +50,8 @@ const pluralize = (num, word, plural = simplePlural) => isPlural(num) ? plural(w
                                             <div class="flex items-center justify-center">
                                                 <div>
                                                     <div class="text-sm font-medium text-gray-900">
-                                                        {{ (status.weight * 0.00220642).toFixed(2) }}
+                                                        <!-- {{ status }} -->
+                                                        {{ Number(status.weight_org).toFixed(2) }}
                                                     </div>
                                                 </div>
                                             </div>
