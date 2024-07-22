@@ -254,7 +254,7 @@ class DashboardController extends Controller
 
                     if ($firstStatusRecord && $firstWeight && Carbon::parse($firstStatusRecord->date_time)->between($startDate, $endDate)) {
                         $statusName = $firstStatusRecord->status->status;
-                        $netWeight = $firstWeight->net_weight;
+                        $netWeight = $firstWeight->net_weight * $item->itemType->weightUnit->convert_to_grams;
 
                         // Aggregate status data
                         if (!isset($statusAggregation[$statusName])) {

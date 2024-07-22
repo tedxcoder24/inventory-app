@@ -41,7 +41,7 @@ const pluralize = (num, word, plural = simplePlural) => isPlural(num) ? plural(w
                                             <div class="flex items-center justify-center">
                                                 <div>
                                                     <div class="text-sm font-medium text-gray-900">
-                                                        {{ status.weight }}
+                                                        {{ status.weight.toFixed(2) }}
                                                     </div>
                                                 </div>
                                             </div>

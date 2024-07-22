@@ -24,6 +24,7 @@ class ItemResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $weight_unit = ItemType::where('id', $this->item_type_id)->first()->weightUnit->abbreviation;
         return [
             'id' => $this->id,
             'operator' => Operator::where('id', $this->operator_id)->first()->operator,
@@ -35,8 +36,9 @@ class ItemResource extends JsonResource
             'convert_to_grams' => ItemType::where('id', $this->item_type_id)->first()->weightUnit->convert_to_grams,
             'batch_id' => $this->batch_id,
             'metrc_id' => $this->metrc_id,
-            'tare_weight' => $this->tare_weight,
-            'gross_weight' => $this->gross_weight,
+            'tare_weight' => "$this->tare_weight ($weight_unit)",
+            'gross_weight' => "$this->gross_weight ($weight_unit)",
+            "net_weight" => $this->gross_weight - $this->tare_weight . " ($weight_unit)",
             'strain' => Strain::where('id', $this->strain_id)->first()->strain,
             'product' => Product::where('id', $this->product_id)->first()->product,
             'color' => Color::where('id', $this->color_id)->first()->color,
