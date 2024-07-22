@@ -123,7 +123,7 @@ const createAttribute = () => {
                         <div>
                             <label>Item Types</label>
 
-                            <AttributeTable header="Item Type" :attributes="itemTypes.data" />
+                            <AttributeTable header="Item Type" :attributes="itemTypes.data" :weight-units="weightUnits" />
                         </div>
 
                         <div>

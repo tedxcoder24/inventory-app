@@ -162,6 +162,7 @@ class AttributeController extends Controller
             case 'Item Type':
                 ItemType::findOrFail($id)->update([
                     'item_type' => $request->text,
+                    'weight_unit_id' => $request->weight_unit,
                     'enabled' => $request->enabled,
                 ]);
                 break;
