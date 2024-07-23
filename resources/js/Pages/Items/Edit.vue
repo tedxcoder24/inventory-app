@@ -7,7 +7,6 @@ import TextInput from '@/Components/TextInput.vue';
 import Select from '@/Components/Select.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
-import DateTimePicker from '@/Components/DateTimePicker.vue';
 import ConfirmationModal from '@/Components/ConfirmationModal.vue';
 import StrainSelectForm from './Partials/StrainSelectForm.vue';
 
@@ -27,7 +26,6 @@ const props = defineProps({
 
 const form = useForm({
     operator_id: props.item.operator_id,
-    date_time: props.item.date_time,
     item_type_id: props.item.item_type_id,
     batch_id: props.item.batch_id,
     metrc_id: props.item.metrc_id,
@@ -68,7 +66,7 @@ const cancel = () => {
 
                         <div class="flex flex-col gap-8">
                             <div class="flex gap-6">
-                                <div class="w-1/3">
+                                <div class="w-1/2">
                                     <InputLabel for="operator" value="Operator *" />
 
                                     <Select
@@ -81,7 +79,7 @@ const cancel = () => {
                                     />
                                 </div>
 
-                                <div class="w-1/3">
+                                <div class="w-1/2">
                                     <InputLabel for="item_type" value="Item Type *" />
                                     
                                     <Select
@@ -90,17 +88,6 @@ const cancel = () => {
                                         v-model="form.item_type_id"
                                         class="mt-1 block w-full"
                                         required
-                                    />
-                                </div>
-
-                                <div class="w-1/3">
-                                    <InputLabel for="date_time" value="Date and Time" />
-
-                                    <DateTimePicker
-                                        id="date_time"
-                                        class="mt-1 block"
-                                        required
-                                        v-model="form.date_time"
                                     />
                                 </div>
                             </div>
