@@ -55,19 +55,16 @@ class DashboardController extends Controller
 
                 foreach ($items as $item) {
                     $latestStatus = $item->statuses()
-                        ->orderByDesc('date_time')
+                        ->orderByDesc('updated_at')
                         ->first();
 
                     $latestWeight = $item->weights()
-                        ->orderByDesc('date_time')
+                        ->orderByDesc('updated_at')
                         ->first();
 
                     if ($latestStatus && $latestWeight && $latestStatus->status->status === 'IN') {
                         $statusName = $latestStatus->status->status;
                         $netWeight = $latestWeight->net_weight * $item->itemType->weightUnit->convert_to_grams;
-                        // dd($latestWeight->net_weight);
-                        // dd($item->itemType->weightUnit->convert_to_grams);
-                        // dd($netWeight);
 
                         // Aggregate status data
                         if (!isset($statusAggregation[$statusName])) {
@@ -152,11 +149,11 @@ class DashboardController extends Controller
 
                 foreach ($items as $item) {
                     $latestStatus = $item->statuses()
-                        ->orderByDesc('date_time')
+                        ->orderByDesc('updated_at')
                         ->first();
 
                     $latestWeight = $item->weights()
-                        ->orderByDesc('date_time')
+                        ->orderByDesc('updated_at')
                         ->first();
 
                     if ($latestStatus && $latestWeight && $latestStatus->status->status !== 'IN') {
@@ -241,9 +238,9 @@ class DashboardController extends Controller
                             $query->select('id')
                                 ->from('statuses')
                                 ->where('status', 'IN')
-                                ->orderBy('date_time')
+                                ->orderBy('created_at')
                                 ->limit(1);
-                        })->whereBetween('date_time', [$startDate, $endDate]);
+                        })->whereBetween('created_at', [$startDate, $endDate]);
                     })
                     ->get();
 
@@ -254,11 +251,11 @@ class DashboardController extends Controller
                         ->whereHas('status', function ($query) {
                             $query->where('status', 'IN');
                         })
-                        ->orderBy('date_time')
+                        ->orderBy('created_at')
                         ->first();
 
                     $firstWeight = $item->weights()
-                        ->orderBy('date_time')
+                        ->orderBy('created_at')
                         ->first();
 
                     if ($firstStatusRecord && $firstWeight && Carbon::parse($firstStatusRecord->date_time)->between($startDate, $endDate)) {

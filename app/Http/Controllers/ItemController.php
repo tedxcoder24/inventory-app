@@ -197,13 +197,11 @@ class ItemController extends Controller
     public function update(ItemStoreRequest $request, string $id)
     {
         $validated_data = $request->validated();
-        $formatted_date = Carbon::parse($validated_data['date_time'])->format('Y-m-d H:i:s');
 
         $item = Item::findOrFail($id);
 
         $item_data = [
             'operator_id' => $validated_data['operator_id'],
-            'date_time' => $formatted_date,
             'item_type_id' => $validated_data['item_type_id'],
             'batch_id' => '',
             'metrc_id' => '',
@@ -223,22 +221,6 @@ class ItemController extends Controller
         if ($validated_data['appearance_id'] !== null) $item_data['appearance_id'] = $validated_data['appearance_id'];
 
         $item->update($item_data);
-
-        // ItemStatus::create([
-        //     'date_time' => $formatted_date,
-        //     'operator_id' => $validated_data['operator_id'],
-        //     'item_id' => $id,
-        //     'status_id' => $validated_data['status_id'],
-        //     'note' => $request->note,
-        // ]);
-
-        // ItemWeight::create([
-        //     'date_time' => $formatted_date,
-        //     'operator_id' => $validated_data['operator_id'],
-        //     'item_id' => $id,
-        //     'gross_weight' => $validated_data['gross_weight'],
-        //     'note' => $request->note,
-        // ]);
 
         event(new ItemUpdated($item));
 
@@ -263,20 +245,16 @@ class ItemController extends Controller
             'id' => 'required|exists:items,id',
             'operator_id' => 'required|exists:operators,id',
             'status_id' => 'required|exists:statuses,id',
-            'date_time' => 'required|date',
             'note' => 'nullable|string|max:255',
         ]);
 
         $item = Item::findOrFail($request->id);
-        $formatted_date = Carbon::parse($request->date_time)->format('Y-m-d H:i:s');
 
         $item->update([
-            'date_time' => $formatted_date,
             'operator_id' => $request->operator_id,
         ]);
 
         ItemStatus::create([
-            'date_time' => $formatted_date,
             'operator_id' => $request->operator_id,
             'item_id' => $item->id,
             'status_id' => $request->status_id,
@@ -294,21 +272,17 @@ class ItemController extends Controller
             'id' => 'required|exists:items,id',
             'operator_id' => 'required|exists:operators,id',
             'gross_weight' => 'required|numeric|min:0',
-            'date_time' => 'required|date',
             'note' => 'nullable|string|max:255',
         ]);
 
         $item = Item::findOrFail($request->id);
-        $formatted_date = Carbon::parse($request->date_time)->format('Y-m-d H:i:s');
 
         $item->update([
-            'date_time' => $formatted_date,
             'operator_id' => $request->operator_id,
             'gross_weight' => $request->gross_weight,
         ]);
 
         ItemWeight::create([
-            'date_time' => $formatted_date,
             'operator_id' => $request->operator_id,
             'item_id' => $item->id,
             'gross_weight' => $request->gross_weight,
@@ -328,21 +302,17 @@ class ItemController extends Controller
             'ids.*' => 'exists:items,id',
             'operator_id' => 'required|exists:operators,id',
             'status_id' => 'required|exists:statuses,id',
-            'date_time' => 'required|date',
             'note' => 'nullable|string|max:255',
         ]);
 
         foreach ($request->ids as $id) {
             $item = Item::findOrFail($id);
-            $formatted_date = Carbon::parse($request->date_time)->format('Y-m-d H:i:s');
 
             $item->update([
                 'operator_id' => $request->operator_id,
-                'date_time' => $formatted_date,
             ]);
 
             ItemStatus::create([
-                'date_time' => $formatted_date,
                 'operator_id' => $request->operator_id,
                 'item_id' => $item->id,
                 'status_id' => $request->status_id,
@@ -360,22 +330,18 @@ class ItemController extends Controller
             'ids.*' => 'exists:items,id',
             'operator_id' => 'required|exists:operators,id',
             'gross_weight' => 'required|numeric|min:0',
-            'date_time' => 'required|date',
             'note' => 'nullable|string|max:255',
         ]);
 
         foreach ($request->ids as $id) {
             $item = Item::findOrFail($id);
-            $formatted_date = Carbon::parse($request->date_time)->format('Y-m-d H:i:s');
 
             $item->update([
                 'operator_id' => $request->operator_id,
-                'date_time' => $formatted_date,
                 'gross_weight' => $request->gross_weight,
             ]);
 
             ItemWeight::create([
-                'date_time' => $formatted_date,
                 'operator_id' => $request->operator_id,
                 'item_id' => $item->id,
                 'gross_weight' => $request->gross_weight,

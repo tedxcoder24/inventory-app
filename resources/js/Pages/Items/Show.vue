@@ -1,12 +1,12 @@
 <script setup>
 import { ref } from 'vue';
-import { Head, Link, router, useForm } from '@inertiajs/vue3';
+import { Head, useForm } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Select from '@/Components/Select.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
+import SecondaryButton from '@/Components/SecondaryButton.vue';
 import DialogModal from '@/Components/DialogModal.vue';
 import InputLabel from '@/Components/InputLabel.vue';
-import DateTimePicker from '@/Components/DateTimePicker.vue';
 import TextInput from '@/Components/TextInput.vue';
 
 const props = defineProps({
@@ -37,7 +37,6 @@ const updateItemStatusForm = useForm({
     id: props.item.id,
     operator_id: props.item.operator_id,
     status_id: props.currentStatus.status.id,
-    date_time: new Date(),
     note: '',
 });
 
@@ -45,7 +44,6 @@ const updateItemWeightForm = useForm({
     id: props.item.id,
     operator_id: props.item.operator_id,
     gross_weight: props.currentWeight.gross_weight,
-    date_time: new Date(),
     note: '',
 });
 
@@ -76,12 +74,6 @@ const updateItemsWeight = () => {
                     Item
                     <i class="fa-solid fa-user-gear"></i>
                 </div>
-                <!-- <Link
-                    :href="`/items/${item.id}/edit`"
-                    class="px-4 py-2 mr-3 text-sm text-green-600 transition border border-green-300 rounded-full hover:bg-green-600 hover:text-white hover:border-transparent hover:cursor-pointer"
-                >
-                    Edit
-                </Link> -->
                 <div>
                     <button
                         href="#"
@@ -344,17 +336,6 @@ const updateItemsWeight = () => {
                         />
                     </div>
 
-                    <div class="mt-4">
-                        <InputLabel for="date_time" value="Date and Time" />
-
-                        <DateTimePicker
-                            id="date_time"
-                            class="mt-1 block"
-                            required
-                            v-model="updateItemStatusForm.date_time"
-                        />
-                    </div>
-
                     <div>
                         <InputLabel for="note" value="Note (optional)" />
 
@@ -416,17 +397,6 @@ const updateItemsWeight = () => {
 
                             <PrimaryButton>Get gross weight</PrimaryButton>
                         </div>
-                    </div>
-
-                    <div class="mt-4">
-                        <InputLabel for="date_time" value="Date and Time" />
-
-                        <DateTimePicker
-                            id="date_time"
-                            class="mt-1 block"
-                            required
-                            v-model="updateItemWeightForm.date_time"
-                        />
                     </div>
 
                     <div>
