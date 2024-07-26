@@ -119,6 +119,7 @@ const headers = ref([
     { title: 'Gross Weight', key: 'gross_weight' },
     { title: 'Date Time', key: 'date_time' },
     { title: 'Operator', key: 'operator' },
+    { title: 'Changed', key: 'changed' },
     { title: 'Actions', key: 'actions', sortable: false },
 ]);
 </script>
