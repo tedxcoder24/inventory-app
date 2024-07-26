@@ -9,9 +9,7 @@ use App\Models\Item;
 use App\Models\Operator;
 use App\Models\ItemType;
 use App\Models\Product;
-use App\Models\Status;
 use App\Models\Strain;
-use App\Models\WeightUnit;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -44,6 +42,7 @@ class ItemResource extends JsonResource
             'color' => Color::where('id', $this->color_id)->first()->color,
             'clarity' => Clarity::where('id', $this->clarity_id)->first()->clarity,
             'appearance' => Appearance::where('id', $this->appearance_id)->first()->appearance,
+            'changed' => $this->created_at != $this->updated_at,
         ];
     }
 }

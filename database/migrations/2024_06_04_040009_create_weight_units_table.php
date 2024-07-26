@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('weight_unit', 20);
             $table->string('abbreviation', 20);
             $table->unsignedFloat('convert_to_grams', 20);
+            $table->boolean('enabled')->default(true);
             $table->timestamps();
             $table->softDeletes();
         });

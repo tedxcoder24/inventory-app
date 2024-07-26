@@ -38,11 +38,21 @@ const confirmAttributeDeletion = (attr) => {
 }
 
 const updateAttribute = (attr) => {
-    router.put(route('attributes.update', attr.value), {
+    const payload = {
         enabled: attr.enabled ? false : true,
-        text: attr.text,
-        attribute: props.header,
-    });
+        text: attr.value,
+        attribute: props.header
+    }
+
+    if (props.header === 'Item Type') {
+        payload.weight_unit = weightUnit.value;
+    }
+
+    if (props.header === 'Weight Unit') {
+        payload.abbreviation = attr.abbreviation;
+    }
+
+    router.put(route('attributes.update', attr.value), payload);
 }
 
 const deleteAttr = () => {
@@ -76,7 +86,7 @@ const editAttr = () => {
     }
     
     if (props.header === 'Weight Unit') {
-        payload.abbreviation = abbreviation;
+        payload.abbreviation = abbreviation.value;
     }
 
     router.put(route('attributes.update', attrToEdit.value.value), payload, {

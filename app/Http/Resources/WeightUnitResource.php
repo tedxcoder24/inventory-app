@@ -19,6 +19,7 @@ class WeightUnitResource extends JsonResource
             'text' => $this->weight_unit,
             'abbreviation' => $this->abbreviation,
             'convert_to_grams' => $this->convert_to_grams,
+            'enabled' => $this->enabled,
         ];
     }
 }

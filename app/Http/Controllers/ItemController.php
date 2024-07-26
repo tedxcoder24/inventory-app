@@ -234,7 +234,7 @@ class ItemController extends Controller
     {
         $item->delete();
 
-        event(new ItemUpdated($item));
+        event(new ItemDeleted($item));
 
         return back()->with('delete', 'Item has been deleted!');
     }
@@ -253,6 +253,8 @@ class ItemController extends Controller
         $item->update([
             'operator_id' => $request->operator_id,
         ]);
+
+        $item->touch();
 
         ItemStatus::create([
             'operator_id' => $request->operator_id,
@@ -282,6 +284,8 @@ class ItemController extends Controller
             'gross_weight' => $request->gross_weight,
         ]);
 
+        $item->touch();
+       
         ItemWeight::create([
             'operator_id' => $request->operator_id,
             'item_id' => $item->id,
@@ -312,6 +316,8 @@ class ItemController extends Controller
                 'operator_id' => $request->operator_id,
             ]);
 
+            $item->touch();
+
             ItemStatus::create([
                 'operator_id' => $request->operator_id,
                 'item_id' => $item->id,
@@ -340,6 +346,8 @@ class ItemController extends Controller
                 'operator_id' => $request->operator_id,
                 'gross_weight' => $request->gross_weight,
             ]);
+
+            $item->touch();
 
             ItemWeight::create([
                 'operator_id' => $request->operator_id,

@@ -212,8 +212,8 @@ class AttributeController extends Controller
                 ]);
                 break;
             case 'Weight Unit':
-                Status::findOrFail($id)->update([
-                    'status' => $request->text,
+                WeightUnit::findOrFail($id)->update([
+                    'weight_unit' => $request->text,
                     'abbreviation' => $request->abbreviation,
                     'enabled' => $request->enabled,
                 ]);
@@ -269,6 +269,10 @@ class AttributeController extends Controller
                 $is_referenced = Item::where('status_id', $id)->exists();
                 // Status::findOrFail($id)->delete();
                 break;
+            case 'Weight Unit':
+                $is_referenced = Item::where('weight_unit_id', $id)->exists();
+                // Status::findOrFail($id)->delete();
+                break;
         }
 
         if ($is_referenced) {
@@ -298,6 +302,9 @@ class AttributeController extends Controller
                 Appearance::findOrFail($id)->delete();
                 break;
             case 'Status':
+                Status::findOrFail($id)->delete();
+                break;
+            case 'Weight Unit':
                 Status::findOrFail($id)->delete();
                 break;
         }
