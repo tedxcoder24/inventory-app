@@ -46,7 +46,7 @@ class DashboardController extends Controller
                                 ->groupBy('is.item_id');
                         })
                             ->whereHas('status', function ($query) {
-                                $query->where('status', 'IN');
+                                $query->whereRaw('LOWER(status) = ?', [strtolower('IN')]);
                             });
                     })
                     ->get();
@@ -62,7 +62,7 @@ class DashboardController extends Controller
                         ->orderByDesc('updated_at')
                         ->first();
 
-                    if ($latestStatus && $latestWeight && $latestStatus->status->status === 'IN') {
+                    if ($latestStatus && $latestWeight && strtolower($latestStatus->status->status) === strtolower('IN')) {
                         $statusName = $latestStatus->status->status;
                         $netWeight = $latestWeight->net_weight * $item->itemType->weightUnit->convert_to_grams;
 
@@ -140,7 +140,7 @@ class DashboardController extends Controller
                             $subQuery->select(DB::raw('MAX(id)'))
                                 ->from('item_statuses')
                                 ->groupBy('item_id')
-                                ->havingRaw('MAX(status_id) != (SELECT id FROM statuses WHERE status = "IN" LIMIT 1)');
+                                ->havingRaw('MAX(status_id) != (SELECT id FROM statuses WHERE LOWER(status) = ? LIMIT 1)', [strtolower('IN')]);
                         });
                     })
                     ->get();
@@ -156,7 +156,7 @@ class DashboardController extends Controller
                         ->orderByDesc('updated_at')
                         ->first();
 
-                    if ($latestStatus && $latestWeight && $latestStatus->status->status !== 'IN') {
+                    if ($latestStatus && $latestWeight && strtolower($latestStatus->status->status) !== strtolower('IN')) {
                         $statusName = $latestStatus->status->status;
                         $netWeight = $latestWeight->net_weight * $item->itemType->weightUnit->convert_to_grams;
 
@@ -237,7 +237,7 @@ class DashboardController extends Controller
                         $query->where('status_id', function ($query) {
                             $query->select('id')
                                 ->from('statuses')
-                                ->where('status', 'IN')
+                                ->whereRaw('LOWER(status) = ?', [strtolower('IN')])
                                 ->orderBy('created_at')
                                 ->limit(1);
                         })->whereBetween('created_at', [$startDate, $endDate]);
@@ -249,7 +249,7 @@ class DashboardController extends Controller
                 foreach ($items as $item) {
                     $firstStatusRecord = $item->statuses()
                         ->whereHas('status', function ($query) {
-                            $query->where('status', 'IN');
+                            $query->whereRaw('LOWER(status) = ?', [strtolower('IN')]);
                         })
                         ->orderBy('created_at')
                         ->first();
